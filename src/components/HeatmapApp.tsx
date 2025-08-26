@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { HeatmapVisualization } from '@/components/HeatmapVisualization'
 import type { ActivityDataPoint, HeatmapProvider } from '@/types/heatmap'
 import { ProviderRegistry } from '@/providers/ProviderRegistry'
+import { UserButton } from '@clerk/clerk-react'
 
 export function HeatmapApp() {
   const [username, setUsername] = useState('')
@@ -52,6 +53,9 @@ export function HeatmapApp() {
   return (
     <div className='min-h-screen bg-gray-50 px-4 py-8'>
       <div className='mx-auto max-w-6xl'>
+        <div className='flex justify-end'>
+          <UserButton />
+        </div>
         <div className='mb-8 text-center'>
           <h1 className='mb-2 text-4xl font-bold text-gray-900'>
             Activity Heatmap

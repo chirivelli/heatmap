@@ -2,6 +2,7 @@
 
 interface ImportMetaEnv {
   readonly VITE_GITHUB_TOKEN: string
+  readonly VITE_CLERK_PUBLISHABLE_KEY: string
   // more env variables...
 }
 
