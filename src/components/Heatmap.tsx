@@ -1,16 +1,14 @@
 import type { ActivityDataPoint, HeatmapConfig } from '@/types/heatmap'
 
-interface HeatmapVisualizationProps {
-  data: ActivityDataPoint[]
-  config?: Partial<HeatmapConfig>
-  onCellClick?: (date: string, count: number) => void
-}
-
-export function HeatmapVisualization({
+export function Heatmap({
   data,
   config = {},
   onCellClick,
-}: HeatmapVisualizationProps) {
+}: {
+  data: ActivityDataPoint[]
+  config?: Partial<HeatmapConfig>
+  onCellClick?: (date: string, count: number) => void
+}) {
   const defaultConfig: HeatmapConfig = {
     startDate: new Date(new Date().getFullYear(), 0, 1), // Start of current year
     endDate: new Date(),
@@ -95,21 +93,12 @@ export function HeatmapVisualization({
 
   return (
     <div className='flex flex-col items-start space-y-4'>
-      <div className='flex items-center space-x-2'>
-        <span className='text-sm text-gray-600'>Less</span>
-        {colors.map((color, index) => (
-          <div
-            key={index}
-            className='h-3 w-3 rounded-sm'
-            style={{ backgroundColor: color }}
-          />
-        ))}
-        <span className='text-sm text-gray-600'>More</span>
-      </div>
-
       <div className='flex space-x-1'>
         {weeks.map((week, weekIndex) => (
-          <div key={weekIndex} className='flex flex-col space-y-1'>
+          <div
+            key={weekIndex}
+            className={`flex flex-col ${weekIndex === 0 && 'justify-end'} space-y-1`}
+          >
             {week.map((date) => {
               const count = dataMap.get(date) || 0
               const color = getColor(count)

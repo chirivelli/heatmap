@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { HeatmapVisualization } from '@/components/HeatmapVisualization'
-import type { ActivityDataPoint, HeatmapProvider } from '@/types/heatmap'
-import { ProviderRegistry } from '@/providers/ProviderRegistry'
 import { UserButton } from '@clerk/clerk-react'
+
+import { Heatmap } from '@/components/Heatmap'
+import { ProviderRegistry } from '@/providers/ProviderRegistry'
+import type { ActivityDataPoint, HeatmapProvider } from '@/types/heatmap'
 
 export function HeatmapApp() {
   const [username, setUsername] = useState('')
-  const [selectedProvider, setSelectedProvider] = useState<string>('github')
+  const [provider, setProvider] = useState<string>('github')
   const [providers, setProviders] = useState<HeatmapProvider[]>([])
 
   useEffect(() => {
@@ -19,17 +20,17 @@ export function HeatmapApp() {
     ActivityDataPoint[],
     Error
   >({
-    queryKey: ['heatmap', selectedProvider, username.trim()],
+    queryKey: ['heatmap', provider, username.trim()],
     queryFn: async () => {
       const registry = new ProviderRegistry()
-      const provider = registry.getProvider(selectedProvider)
-      if (!provider) {
-        throw new Error(`Provider ${selectedProvider} not found`)
+      const currProvider = registry.getProvider(provider)
+      if (!currProvider) {
+        throw new Error(`Provider ${provider} not found`)
       }
       if (!username.trim()) {
         throw new Error('Please enter a username')
       }
-      return provider.fetchData(username.trim())
+      return currProvider.fetchData(username.trim())
     },
     enabled: false,
     staleTime: 1000 * 60 * 5,
@@ -94,8 +95,8 @@ export function HeatmapApp() {
               </label>
               <select
                 id='provider'
-                value={selectedProvider}
-                onChange={(e) => setSelectedProvider(e.target.value)}
+                value={provider}
+                onChange={(e) => setProvider(e.target.value)}
                 className='w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none'
               >
                 {providers.map((provider) => (
@@ -164,21 +165,18 @@ export function HeatmapApp() {
                 ></path>
               </svg>
               Fetching data from{' '}
-              {providers.find((p) => p.name === selectedProvider)?.displayName}
+              {providers.find((p) => p.name === provider)?.displayName}
               ...
             </div>
           </div>
         )}
 
-        {Array.isArray(data) && data.length > 0 && !isFetching && (
+        {!isFetching && Array.isArray(data) && data.length > 0 && (
           <div className='rounded-lg bg-white p-6 shadow-lg'>
             <div className='mb-4'>
               <h2 className='mb-2 text-xl font-semibold text-gray-900'>
                 {username}'s Activity on{' '}
-                {
-                  providers.find((p) => p.name === selectedProvider)
-                    ?.displayName
-                }
+                {providers.find((p) => p.name === provider)?.displayName}
               </h2>
               <p className='text-gray-600'>
                 Total contributions:{' '}
@@ -187,7 +185,7 @@ export function HeatmapApp() {
             </div>
 
             <div className='overflow-x-auto'>
-              <HeatmapVisualization data={data} onCellClick={handleCellClick} />
+              <Heatmap data={data} onCellClick={handleCellClick} />
             </div>
           </div>
         )}
