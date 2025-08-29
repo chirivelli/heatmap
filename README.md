@@ -5,7 +5,6 @@ A modular, extensible web application that visualizes user activity across diffe
 ## Features
 
 - **GitHub Integration**: Real commit data using GitHub's GraphQL API (requires token)
-- **MongoDB Ready**: Designed with MongoDB persistence in mind for future backend integration
 - **Modular Architecture**: Easy to add new platforms by implementing the `HeatmapProvider` interface
 - **Responsive Design**: Beautiful UI built with React and Tailwind CSS
 - **Interactive Heatmap**: Click on cells to see detailed information
@@ -22,16 +21,6 @@ A modular, extensible web application that visualizes user activity across diffe
 4. **Restart Dev Server**: The token will be loaded on restart
 
 **Fallback**: If no token is provided, the app will generate realistic mock data.
-
-## 🗄️ MongoDB Integration Ready
-
-The application is designed with MongoDB in mind:
-
-- **Document Structure**: All data models extend `MongoDocument` interface
-- **User Profiles**: Store user information and platform preferences
-- **Activity Data**: Efficient storage of daily activity counts
-- **Search & Pagination**: Built-in support for future database queries
-- **API Responses**: Consistent response format for database operations
 
 ## Getting Started
 
@@ -193,7 +182,6 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## Future Enhancements
 
-- [ ] MongoDB backend integration
 - [ ] User authentication and profiles
 - [ ] Data persistence and caching
 - [ ] More platforms (LeetCode, HackerRank, etc.)

@@ -5,6 +5,7 @@ import { UserButton } from '@clerk/clerk-react'
 import { Heatmap } from '@/components/Heatmap'
 import { ProviderRegistry } from '@/providers/ProviderRegistry'
 import type { ActivityDataPoint, HeatmapProvider } from '@/types/heatmap'
+import { getEndeavors } from '@/db/endeavors'
 
 export function HeatmapApp() {
   const [username, setUsername] = useState('')
@@ -14,6 +15,14 @@ export function HeatmapApp() {
   useEffect(() => {
     const registry = new ProviderRegistry()
     setProviders(registry.getAllProviders())
+
+    async function printEndeavors() {
+      let { data, error } = await getEndeavors()
+      console.log('data', data)
+      console.log('error', error)
+    }
+
+    printEndeavors()
   }, [])
 
   const { data, isFetching, isError, error, refetch, isSuccess } = useQuery<
