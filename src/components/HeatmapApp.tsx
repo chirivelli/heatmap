@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { UserButton } from '@clerk/clerk-react'
+import { UserButton, useSession, useUser } from '@clerk/clerk-react'
 
 import { Heatmap } from '@/components/Heatmap'
 import { ProviderRegistry } from '@/providers/ProviderRegistry'
 import type { ActivityDataPoint, HeatmapProvider } from '@/types/heatmap'
-import { getEndeavors } from '@/db/endeavors'
+import { createClient } from '@supabase/supabase-js'
 
 export function HeatmapApp() {
   const [username, setUsername] = useState('')
@@ -15,14 +15,6 @@ export function HeatmapApp() {
   useEffect(() => {
     const registry = new ProviderRegistry()
     setProviders(registry.getAllProviders())
-
-    async function printEndeavors() {
-      let { data, error } = await getEndeavors()
-      console.log('data', data)
-      console.log('error', error)
-    }
-
-    printEndeavors()
   }, [])
 
   const { data, isFetching, isError, error, refetch, isSuccess } = useQuery<
@@ -45,18 +37,41 @@ export function HeatmapApp() {
     staleTime: 1000 * 60 * 5,
   })
 
-  const handleFetchData = async () => {
-    await refetch()
-  }
+  const { user } = useUser()
+  console.log({ user })
+  const { session } = useSession()
 
-  const handleCellClick = (date: string, count: number) => {
-    console.log(`Clicked on ${date}: ${count} contributions`)
-    // You can add more detailed tooltips or modals here
-  }
+  const creatClerkSupabaseClient = () =>
+    createClient(
+      import.meta.env.VITE_SUPABASE_PROJ_URL,
+      import.meta.env.VITE_SUPABASE_ANON_KEY,
+      {
+        accessToken: async () => session?.getToken() ?? null,
+      },
+    )
+
+  const client = creatClerkSupabaseClient()
+
+  useEffect(() => {
+    if (!user) return
+
+    async function loadPlatforms() {
+      const { data, error } = await client.from('platforms').select()
+      console.log({ data, error })
+    }
+
+    async function loadEndeavors() {
+      const { data, error } = await client.from('endeavors').select()
+      console.log({ data, error })
+    }
+
+    loadPlatforms()
+    loadEndeavors()
+  }, [user])
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
-      handleFetchData()
+      refetch()
     }
   }
 
@@ -117,7 +132,7 @@ export function HeatmapApp() {
             </div>
 
             <button
-              onClick={handleFetchData}
+              onClick={() => refetch()}
               disabled={isFetching || !username.trim()}
               className='w-full rounded-md bg-blue-600 px-6 py-2 font-medium text-white transition-colors hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto'
             >
@@ -194,7 +209,13 @@ export function HeatmapApp() {
             </div>
 
             <div className='overflow-x-auto'>
-              <Heatmap data={data} onCellClick={handleCellClick} />
+              <Heatmap
+                data={data}
+                onCellClick={(date: string, count: number) => {
+                  console.log(`Clicked on ${date}: ${count} contributions`)
+                  // You can add more detailed tooltips or modals here
+                }}
+              />
             </div>
           </div>
         )}
