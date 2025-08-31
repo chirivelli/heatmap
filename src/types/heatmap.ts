@@ -5,7 +5,7 @@ export type ActivityDataPoint = {
 
 export type UserProfile = {
   username: string
-  platform: 'github' | 'leetcode'
+  platform: 'GitHub' | 'LeetCode' | 'BootDev'
   displayName?: string
   avatarUrl?: string
   totalContributions?: number
@@ -32,7 +32,6 @@ export type HeatmapConfig = {
 
 export type HeatmapProvider = {
   name: string
-  displayName: string
   fetchData: (username: string) => Promise<ActivityDataPoint[]>
 }
 

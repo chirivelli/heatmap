@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { UserButton, useSession, useUser } from '@clerk/clerk-react'
+import { useSession, useUser } from '@clerk/clerk-react'
 
 import { Heatmap } from '@/components/Heatmap'
 import { ProviderRegistry } from '@/providers/ProviderRegistry'
@@ -9,7 +9,7 @@ import { createClient } from '@supabase/supabase-js'
 
 export function HeatmapApp() {
   const [username, setUsername] = useState('')
-  const [provider, setProvider] = useState<string>('github')
+  const [provider, setProvider] = useState<string>('GitHub')
   const [providers, setProviders] = useState<HeatmapProvider[]>([])
 
   useEffect(() => {
@@ -38,7 +38,6 @@ export function HeatmapApp() {
   })
 
   const { user } = useUser()
-  console.log({ user })
   const { session } = useSession()
 
   const creatClerkSupabaseClient = () =>
@@ -76,20 +75,8 @@ export function HeatmapApp() {
   }
 
   return (
-    <div className='min-h-screen bg-gray-50 px-4 py-8'>
+    <div className='min-h-screen bg-gray-800'>
       <div className='mx-auto max-w-6xl'>
-        <div className='flex justify-end'>
-          <UserButton />
-        </div>
-        <div className='mb-8 text-center'>
-          <h1 className='mb-2 text-4xl font-bold text-gray-900'>
-            Activity Heatmap
-          </h1>
-          <p className='text-lg text-gray-600'>
-            Visualize your activity across different platforms
-          </p>
-        </div>
-
         <div className='mb-8 rounded-lg bg-white p-6 shadow-lg'>
           <div className='flex flex-col items-end gap-4 sm:flex-row'>
             <div className='flex-1'>
@@ -125,7 +112,7 @@ export function HeatmapApp() {
               >
                 {providers.map((provider) => (
                   <option key={provider.name} value={provider.name}>
-                    {provider.displayName}
+                    {provider.name}
                   </option>
                 ))}
               </select>
@@ -189,7 +176,7 @@ export function HeatmapApp() {
                 ></path>
               </svg>
               Fetching data from{' '}
-              {providers.find((p) => p.name === provider)?.displayName}
+              {providers.find((p) => p.name === provider)?.name}
               ...
             </div>
           </div>
@@ -200,7 +187,7 @@ export function HeatmapApp() {
             <div className='mb-4'>
               <h2 className='mb-2 text-xl font-semibold text-gray-900'>
                 {username}'s Activity on{' '}
-                {providers.find((p) => p.name === provider)?.displayName}
+                {providers.find((p) => p.name === provider)?.name}
               </h2>
               <p className='text-gray-600'>
                 Total contributions:{' '}

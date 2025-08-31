@@ -1,8 +1,7 @@
 import type { HeatmapProvider, ActivityDataPoint } from '../types/heatmap'
 
 export class GitHubHeatmapProvider implements HeatmapProvider {
-  name = 'github'
-  displayName = 'GitHub'
+  name = 'GitHub'
 
   async fetchData(username: string): Promise<ActivityDataPoint[]> {
     try {
