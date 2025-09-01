@@ -11,7 +11,12 @@ export function RootLayout() {
       </SignedOut>
 
       <SignedIn>
-        <Outlet />
+        <div className='bg-base-200 flex min-h-screen flex-col'>
+          <NavBar />
+          <div className='mx-auto w-7xl grow p-4'>
+            <Outlet />
+          </div>
+        </div>
       </SignedIn>
     </div>
   )

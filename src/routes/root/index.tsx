@@ -4,11 +4,10 @@ import { useSession, useUser } from '@clerk/clerk-react'
 import { createClient } from '@supabase/supabase-js'
 
 import { ProviderRegistry } from '@/providers/ProviderRegistry'
-import { NavBar } from '@/routes/root/layout'
 import type { ActivityDataPoint, HeatmapProvider } from '@/types/heatmap'
 import { Heatmap } from '@/components/Heatmap'
 
-export function Home() {
+export function Index() {
   const [username, setUsername] = useState('')
   const [provider, setProvider] = useState('GitHub')
   const [providers, setProviders] = useState<HeatmapProvider[]>([])
@@ -55,24 +54,21 @@ export function Home() {
   useEffect(() => {
     if (!user) return
 
-    async function loadPlatforms() {
-      const { data, error } = await client.from('platforms').select()
-      console.log({ data, error })
-    }
-
     async function loadEndeavors() {
       const { data, error } = await client.from('endeavors').select()
-      console.log({ data, error })
-    }
 
-    loadPlatforms()
+      console.log('endeavors', { data, error })
+    }
     loadEndeavors()
   }, [user])
 
-  return (
-    <div className='bg-base-200'>
-      <NavBar />
+  async function addPlatform(platform_id: number, username: string) {
+    // const res = await client.from('endeavors').insert({ platform_id, username })
+    // console.log('insert', res)
+  }
 
+  return (
+    <div>
       <div className='flex flex-col items-center justify-center gap-4 p-4'>
         <div className='card card-dash bg-base-100 w-max'>
           <div className='card-body items-center'>
