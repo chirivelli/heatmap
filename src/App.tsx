@@ -4,7 +4,6 @@ import { createBrowserRouter } from 'react-router'
 import { RootLayout } from '@/routes/root/layout'
 import { Home } from '@/routes/root/home'
 import { Index } from '@/routes/root'
-import { HeatmapApp } from '@/components/HeatmapApp'
 
 const router = createBrowserRouter([
   {
@@ -13,7 +12,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, Component: Home },
       { path: 'home', Component: Index },
-      { path: 'app', Component: HeatmapApp },
+      // { path: 'app', Component: HeatmapApp },
     ],
   },
 ])
