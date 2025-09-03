@@ -1,130 +1,127 @@
-import type { ActivityDataPoint, HeatmapConfig } from '@/types/heatmap'
+import { useQuery } from '@tanstack/react-query'
+import { HeatmapGrid } from '@/components/HeatmapGrid'
+import { ProviderRegistry } from '@/providers/ProviderRegistry'
+import type { ActivityDataPoint } from '@/types/heatmap'
 
 export function Heatmap({
-  data,
-  config = {},
-  onCellClick,
+  username,
+  platform,
 }: {
-  data: ActivityDataPoint[]
-  config?: Partial<HeatmapConfig>
-  onCellClick?: (date: string, count: number) => void
+  username: string
+  platform: string
 }) {
-  const defaultConfig: HeatmapConfig = {
-    startDate: new Date(new Date().getFullYear(), 0, 1), // Start of current year
-    endDate: new Date(),
-    cellSize: 12,
-    cellSpacing: 2,
-    colors: ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'],
-    ...config,
-  }
-
-  const { startDate, endDate, cellSize, cellSpacing, colors } = defaultConfig
-
-  // Create a map of date to count for quick lookup
-  const dataMap = new Map<string, number>()
-  data.forEach((point) => {
-    dataMap.set(point.date, point.count)
+  const { data, isFetching, isError, error, isSuccess } = useQuery<
+    ActivityDataPoint[],
+    Error
+  >({
+    queryKey: ['heatmap', platform, username.trim()],
+    queryFn: async () => {
+      const registry = new ProviderRegistry()
+      const currProvider = registry.getProvider(platform)
+      if (!currProvider) {
+        throw new Error(`Provider ${platform} not found`)
+      }
+      if (!username.trim()) {
+        throw new Error('Please enter a username')
+      }
+      return currProvider.fetchData(username.trim())
+    },
+    staleTime: 1000 * 60 * 5,
   })
 
-  // Generate all dates in the range
-  const generateDates = (): string[] => {
-    const dates: string[] = []
-    const current = new Date(startDate)
-
-    while (current <= endDate) {
-      dates.push(current.toISOString().split('T')[0])
-      current.setDate(current.getDate() + 1)
-    }
-
-    return dates
-  }
-
-  const dates = generateDates()
-
-  // Get color based on count
-  const getColor = (count: number): string => {
-    if (count === 0) return colors[0]
-    if (count <= 1) return colors[1]
-    if (count <= 3) return colors[2]
-    if (count <= 6) return colors[3]
-    return colors[4]
-  }
-
-  // Group dates by week for proper calendar layout
-  const groupByWeek = (dates: string[]): string[][] => {
-    const weeks: string[][] = []
-    let currentWeek: string[] = []
-
-    dates.forEach((date, index) => {
-      const dayOfWeek = new Date(date).getDay()
-
-      if (dayOfWeek === 0 && currentWeek.length > 0) {
-        weeks.push(currentWeek)
-        currentWeek = []
-      }
-
-      currentWeek.push(date)
-
-      if (index === dates.length - 1) {
-        weeks.push(currentWeek)
-      }
-    })
-
-    return weeks
-  }
-
-  const weeks = groupByWeek(dates)
-
-  const handleCellClick = (date: string, count: number) => {
-    if (onCellClick) {
-      onCellClick(date, count)
-    }
-  }
-
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    })
-  }
-
   return (
-    <div className='flex flex-col items-start space-y-4'>
-      <div className='flex space-x-1'>
-        {weeks.map((week, weekIndex) => (
-          <div
-            key={weekIndex}
-            className={`flex flex-col ${weekIndex === 0 && 'justify-end'} space-y-1`}
-          >
-            {week.map((date) => {
-              const count = dataMap.get(date) || 0
-              const color = getColor(count)
-
-              return (
-                <div
-                  key={date}
-                  className='hover:ring-opacity-50 cursor-pointer rounded-sm transition-all duration-200 hover:ring-2 hover:ring-blue-400'
-                  style={{
-                    width: cellSize,
-                    height: cellSize,
-                    backgroundColor: color,
-                    margin: cellSpacing / 2,
-                  }}
-                  onClick={() => handleCellClick(date, count)}
-                  title={`${formatDate(date)}: ${count} contributions`}
+    <div className='mx-auto max-w-6xl'>
+      {isError && error && (
+        <div className='mb-8 rounded-md border border-red-200 bg-red-50 p-4'>
+          <div className='flex'>
+            <div className='flex-shrink-0'>
+              <svg
+                className='h-5 w-5 text-red-400'
+                viewBox='0 0 20 20'
+                fill='currentColor'
+              >
+                <path
+                  fillRule='evenodd'
+                  d='M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z'
+                  clipRule='evenodd'
                 />
-              )
-            })}
+              </svg>
+            </div>
+            <div className='ml-3'>
+              <h3 className='text-sm font-medium text-red-800'>Error</h3>
+              <div className='mt-2 text-sm text-red-700'>{error.message}</div>
+            </div>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
 
-      <div className='text-xs text-gray-500'>
-        {dates.length} days of activity
-      </div>
+      {isFetching && (
+        <div className='rounded-lg bg-white p-8 text-center shadow-lg'>
+          <div className='inline-flex items-center px-4 py-2 leading-6 font-semibold text-blue-600'>
+            <svg
+              className='mr-3 -ml-1 h-5 w-5 animate-spin text-blue-600'
+              xmlns='http://www.w3.org/2000/svg'
+              fill='none'
+              viewBox='0 0 24 24'
+            >
+              <circle
+                className='opacity-25'
+                cx='12'
+                cy='12'
+                r='10'
+                stroke='currentColor'
+                strokeWidth='4'
+              ></circle>
+              <path
+                className='opacity-75'
+                fill='currentColor'
+                d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+              ></path>
+            </svg>
+            Fetching data ...
+          </div>
+        </div>
+      )}
+
+      {!isFetching && Array.isArray(data) && data.length > 0 && (
+        <div className='rounded-lg bg-white p-6 shadow-lg'>
+          <div className='mb-4'>
+            <h2 className='mb-2 text-xl font-semibold text-gray-900'>
+              {username}'s Activity on {platform}
+            </h2>
+            <p className='text-gray-600'>
+              Total contributions:{' '}
+              {data.reduce((sum, point) => sum + point.count, 0)}
+            </p>
+          </div>
+
+          <div className='overflow-x-auto'>
+            <HeatmapGrid
+              data={data}
+              onCellClick={(date: string, count: number) => {
+                console.log(`Clicked on ${date}: ${count} contributions`)
+                // You can add more detailed tooltips or modals here
+              }}
+            />
+          </div>
+        </div>
+      )}
+
+      {!isFetching &&
+        !isError &&
+        isSuccess &&
+        Array.isArray(data) &&
+        data.length === 0 &&
+        username && (
+          <div className='rounded-lg bg-white p-8 text-center shadow-lg'>
+            <div className='text-gray-500'>
+              <p className='text-lg'>No data found for "{username}"</p>
+              <p className='mt-2 text-sm'>
+                Try a different username or platform
+              </p>
+            </div>
+          </div>
+        )}
     </div>
   )
 }

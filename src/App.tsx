@@ -2,18 +2,13 @@ import { RouterProvider } from 'react-router'
 import { createBrowserRouter } from 'react-router'
 
 import { RootLayout } from '@/routes/root/layout'
-import { Home } from '@/routes/root/home'
-import { Index } from '@/routes/root'
+import { IndexPage } from '@/routes/root'
 
 const router = createBrowserRouter([
   {
     path: '/',
     Component: RootLayout,
-    children: [
-      { index: true, Component: Home },
-      { path: 'home', Component: Index },
-      // { path: 'app', Component: HeatmapApp },
-    ],
+    children: [{ index: true, Component: IndexPage }],
   },
 ])
 

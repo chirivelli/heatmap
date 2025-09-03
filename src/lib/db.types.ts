@@ -68,7 +68,14 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      endeavors_with_platforms: {
+        Row: {
+          platform: string | null
+          user_id: string | null
+          username: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never
