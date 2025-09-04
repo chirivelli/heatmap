@@ -1,8 +1,20 @@
-import { Heatmap } from '@/components/Heatmap'
-import { useEndeavorQuery } from '@/db/useEndeavorQuery'
+import { useSupabaseClient } from '@/db/useSupabaseClient'
+import { Endeavors } from '@/routes/root/(heatmap)/Endeavors'
 
 export function IndexPage() {
-  const { data, refetch } = useEndeavorQuery()
+  const client = useSupabaseClient()
+
+  async function formAction(formData: FormData) {
+    const platform_id = parseInt(formData.get('platform_id') as string)
+    const username = formData.get('username') as string
+
+    const res = await client.from('endeavors').insert({
+      platform_id,
+      username,
+    })
+
+    console.log(res.data)
+  }
 
   return (
     <div className='mx-auto grid gap-4'>
@@ -12,31 +24,33 @@ export function IndexPage() {
 
           <p>Connect a Platform to start tracking</p>
 
-          <div className='card-actions flex-nowrap'>
-            <select defaultValue='Pick a Platform' className='select'>
+          <form action={formAction} className='card-actions flex-nowrap'>
+            <select
+              defaultValue='Pick a Platform'
+              className='select'
+              name='platform_id'
+            >
               <option disabled={true}>Pick a platform</option>
-              <option value={'GitHub'}>GitHub</option>
-              <option value={'LeetCode'}>LeetCode</option>
-              <option value={'BootDev'}>BootDev</option>
+              <option value={1}>GitHub</option>
+              <option value={2}>LeetCode</option>
+              <option value={3}>BootDev</option>
             </select>
 
-            <input type='text' placeholder='username' className='input' />
+            <input
+              name='username'
+              type='text'
+              placeholder='username'
+              className='input'
+            />
 
-            <button className='btn btn-primary' onClick={() => refetch()}>
+            <button type='submit' className='btn btn-primary'>
               + Add
             </button>
-          </div>
+          </form>
         </div>
       </div>
 
-      <div className='grid gap-4'>
-        {/* {JSON.stringify(data, null, 1)} */}
-        {data?.map((e, i) => (
-          <div key={[e.user_id, e.platform].join('-')}>
-            <Heatmap username={e.username ?? ''} platform={e.platform ?? ''} />
-          </div>
-        ))}
-      </div>
+      <Endeavors />
     </div>
   )
 }
