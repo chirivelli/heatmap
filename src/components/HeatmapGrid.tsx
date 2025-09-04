@@ -14,7 +14,7 @@ export function HeatmapGrid({
     endDate: new Date(),
     cellSize: 12,
     cellSpacing: 2,
-    colors: ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'],
+    colors: ['#23272f', '#264d3b', '#2e7d4f', '#44c06f', '#a6f6c1'],
     ...config,
   }
 
@@ -92,12 +92,12 @@ export function HeatmapGrid({
   }
 
   return (
-    <div className='flex flex-col items-start space-y-4'>
-      <div className='flex space-x-1'>
+    <div className='flex flex-col items-start gap-4'>
+      <div className='flex gap-1'>
         {weeks.map((week, weekIndex) => (
           <div
             key={weekIndex}
-            className={`flex flex-col ${weekIndex === 0 && 'justify-end'} space-y-1`}
+            className={`flex flex-col ${weekIndex === 0 && 'justify-end'} gap-1`}
           >
             {week.map((date) => {
               const count = dataMap.get(date) || 0
@@ -106,7 +106,7 @@ export function HeatmapGrid({
               return (
                 <div
                   key={date}
-                  className='hover:ring-opacity-50 cursor-pointer rounded-sm transition-all duration-200 hover:ring-2 hover:ring-blue-400'
+                  className='hover:ring-opacity-50 cursor-pointer transition-all duration-200 hover:ring-2 hover:ring-blue-400'
                   style={{
                     width: cellSize,
                     height: cellSize,

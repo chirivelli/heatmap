@@ -1,4 +1,4 @@
-import type { Database } from '@/lib/db.types'
+import type { Database } from '@/db/supabase.types'
 import { useSession } from '@clerk/clerk-react'
 import { createClient } from '@supabase/supabase-js'
 

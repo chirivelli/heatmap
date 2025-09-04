@@ -1,11 +1,10 @@
 import { useSession } from '@clerk/clerk-react'
 import { useQuery } from '@tanstack/react-query'
 
-import { useSupabaseClient } from '@/hooks/useSupabaseClient'
-import type { Database } from '@/lib/db.types'
+import { useSupabaseClient } from '@/db/useSupabaseClient'
+import type { Database } from '@/db/supabase.types'
 
 type Endeavor = Database['public']['Views']['endeavors_with_platforms']['Row']
-
 
 export function useEndeavorQuery() {
   const { session } = useSession()

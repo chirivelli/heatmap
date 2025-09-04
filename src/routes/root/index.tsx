@@ -1,5 +1,5 @@
 import { Heatmap } from '@/components/Heatmap'
-import { useEndeavorQuery } from '@/hooks/useEndeavorQuery'
+import { useEndeavorQuery } from '@/db/useEndeavorQuery'
 
 export function IndexPage() {
   const { data, refetch } = useEndeavorQuery()
@@ -30,9 +30,9 @@ export function IndexPage() {
       </div>
 
       <div className='grid gap-4'>
-        {/* {JSON.stringify(data)} */}
+        {/* {JSON.stringify(data, null, 1)} */}
         {data?.map((e, i) => (
-          <div key={i} className='card bg-base-100'>
+          <div key={[e.user_id, e.platform].join('-')}>
             <Heatmap username={e.username ?? ''} platform={e.platform ?? ''} />
           </div>
         ))}

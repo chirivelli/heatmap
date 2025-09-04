@@ -1,62 +1,28 @@
 import { useQuery } from '@tanstack/react-query'
 import { HeatmapGrid } from '@/components/HeatmapGrid'
-import { ProviderRegistry } from '@/providers/ProviderRegistry'
+import { useProvider } from '@/providers/useProvider'
 import type { ActivityDataPoint } from '@/types/heatmap'
 
-export function Heatmap({
-  username,
-  platform,
-}: {
+type HeatMapProps = {
   username: string
   platform: string
-}) {
+}
+
+export function Heatmap({ username, platform }: HeatMapProps) {
+  const provider = useProvider(platform)
+
   const { data, isFetching, isError, error, isSuccess } = useQuery<
-    ActivityDataPoint[],
-    Error
+    ActivityDataPoint[]
   >({
     queryKey: ['heatmap', platform, username.trim()],
-    queryFn: async () => {
-      const registry = new ProviderRegistry()
-      const currProvider = registry.getProvider(platform)
-      if (!currProvider) {
-        throw new Error(`Provider ${platform} not found`)
-      }
-      if (!username.trim()) {
-        throw new Error('Please enter a username')
-      }
-      return currProvider.fetchData(username.trim())
-    },
+    queryFn: async () => provider.fetchData(username.trim()),
     staleTime: 1000 * 60 * 5,
   })
 
   return (
-    <div className='mx-auto max-w-6xl'>
-      {isError && error && (
-        <div className='mb-8 rounded-md border border-red-200 bg-red-50 p-4'>
-          <div className='flex'>
-            <div className='flex-shrink-0'>
-              <svg
-                className='h-5 w-5 text-red-400'
-                viewBox='0 0 20 20'
-                fill='currentColor'
-              >
-                <path
-                  fillRule='evenodd'
-                  d='M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z'
-                  clipRule='evenodd'
-                />
-              </svg>
-            </div>
-            <div className='ml-3'>
-              <h3 className='text-sm font-medium text-red-800'>Error</h3>
-              <div className='mt-2 text-sm text-red-700'>{error.message}</div>
-            </div>
-          </div>
-        </div>
-      )}
-
+    <div className='card bg-base-100 max-w-8xl mx-auto'>
       {isFetching && (
-        <div className='rounded-lg bg-white p-8 text-center shadow-lg'>
+        <div className='p-8 text-center shadow-lg'>
           <div className='inline-flex items-center px-4 py-2 leading-6 font-semibold text-blue-600'>
             <svg
               className='mr-3 -ml-1 h-5 w-5 animate-spin text-blue-600'
@@ -84,12 +50,12 @@ export function Heatmap({
       )}
 
       {!isFetching && Array.isArray(data) && data.length > 0 && (
-        <div className='rounded-lg bg-white p-6 shadow-lg'>
+        <div className='p-6 shadow-lg'>
           <div className='mb-4'>
-            <h2 className='mb-2 text-xl font-semibold text-gray-900'>
+            <h2 className='mb-2 text-xl font-semibold text-gray-100'>
               {username}'s Activity on {platform}
             </h2>
-            <p className='text-gray-600'>
+            <p className='text-gray-200'>
               Total contributions:{' '}
               {data.reduce((sum, point) => sum + point.count, 0)}
             </p>
@@ -122,6 +88,30 @@ export function Heatmap({
             </div>
           </div>
         )}
+
+      {isError && error && (
+        <div className='border border-red-200 bg-red-50 p-4'>
+          <div className='flex'>
+            <div className='flex-shrink-0'>
+              <svg
+                className='h-5 w-5 text-red-400'
+                viewBox='0 0 20 20'
+                fill='currentColor'
+              >
+                <path
+                  fillRule='evenodd'
+                  d='M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z'
+                  clipRule='evenodd'
+                />
+              </svg>
+            </div>
+            <div className='ml-3'>
+              <h3 className='text-sm font-medium text-red-800'>Error</h3>
+              <div className='mt-2 text-sm text-red-700'>{error.message}</div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

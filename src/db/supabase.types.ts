@@ -1,4 +1,4 @@
-// bunx supabase gen types typescript --project-id rzbygjyhrihipaiocjiu > src/lib/db.types.ts
+// bunx supabase gen types typescript --project-id rzbygjyhrihipaiocjiu > src/db/db.types.ts
 
 export type Json =
   | string
