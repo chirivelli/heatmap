@@ -17,37 +17,31 @@ export function IndexPage() {
   }
 
   return (
-    <div className='mx-auto grid gap-4'>
-      <div className='card card-dash bg-base-100 w-full'>
-        <div className='card-body items-center'>
-          <h2 className='card-title'>Track your Heatmaps!</h2>
+    <div className='grid gap-4'>
+      <div className='mx-auto bg-gray-900 p-4'>
+        <form action={formAction} className='flex flex-nowrap gap-4'>
+          <select
+            defaultValue='Pick a Platform'
+            className='bg-gray-800 p-2'
+            name='platform_id'
+          >
+            <option disabled={true}>Pick a platform</option>
+            <option value={1}>GitHub</option>
+            <option value={2}>LeetCode</option>
+            <option value={3}>BootDev</option>
+          </select>
 
-          <p>Connect a Platform to start tracking</p>
+          <input
+            name='username'
+            type='text'
+            placeholder='username'
+            className='bg-gray-800 p-2'
+          />
 
-          <form action={formAction} className='card-actions flex-nowrap'>
-            <select
-              defaultValue='Pick a Platform'
-              className='select'
-              name='platform_id'
-            >
-              <option disabled={true}>Pick a platform</option>
-              <option value={1}>GitHub</option>
-              <option value={2}>LeetCode</option>
-              <option value={3}>BootDev</option>
-            </select>
-
-            <input
-              name='username'
-              type='text'
-              placeholder='username'
-              className='input'
-            />
-
-            <button type='submit' className='btn btn-primary'>
-              + Add
-            </button>
-          </form>
-        </div>
+          <button type='submit' className='bg-gray-800 p-2'>
+            + Add
+          </button>
+        </form>
       </div>
 
       <Endeavors />

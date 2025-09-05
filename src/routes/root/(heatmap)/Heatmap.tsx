@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import { HeatmapGrid } from '@/components/HeatmapGrid'
+import { HeatmapGrid } from '@/routes/root/(heatmap)/HeatmapGrid'
 import { useProvider } from '@/providers/useProvider'
-import type { ActivityDataPoint } from '@/types/heatmap'
+import type { ActivityDataPoint } from '@/providers/heatmap'
 
 type HeatMapProps = {
   username: string
@@ -20,9 +20,9 @@ export function Heatmap({ username, platform }: HeatMapProps) {
   })
 
   return (
-    <div className='card bg-base-100 max-w-8xl mx-auto'>
+    <div className='max-w-8xl mx-auto bg-gray-900'>
       {isFetching && (
-        <div className='p-8 text-center shadow-lg'>
+        <div className='p-8 text-center'>
           <div className='inline-flex items-center px-4 py-2 leading-6 font-semibold text-blue-600'>
             <svg
               className='mr-3 -ml-1 h-5 w-5 animate-spin text-blue-600'
@@ -50,7 +50,7 @@ export function Heatmap({ username, platform }: HeatMapProps) {
       )}
 
       {!isFetching && Array.isArray(data) && data.length > 0 && (
-        <div className='p-6 shadow-lg'>
+        <div className='p-6'>
           <div className='mb-4'>
             <h2 className='mb-2 text-xl font-semibold text-gray-100'>
               {username}'s Activity on {platform}
@@ -79,7 +79,7 @@ export function Heatmap({ username, platform }: HeatMapProps) {
         Array.isArray(data) &&
         data.length === 0 &&
         username && (
-          <div className='rounded-lg bg-white p-8 text-center shadow-lg'>
+          <div className='rounded-lg bg-white p-8 text-center'>
             <div className='text-gray-500'>
               <p className='text-lg'>No data found for "{username}"</p>
               <p className='mt-2 text-sm'>

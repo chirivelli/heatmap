@@ -1,4 +1,4 @@
-import type { ActivityDataPoint, HeatmapConfig } from '@/types/heatmap'
+import type { ActivityDataPoint, HeatmapConfig } from '@/providers/heatmap'
 
 export function HeatmapGrid({
   data,

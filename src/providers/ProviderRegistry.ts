@@ -1,5 +1,5 @@
-import type { HeatmapProvider } from '@/types/heatmap'
 import { GitHubHeatmapProvider } from '@/providers/GitHubHeatmapProvider'
+import type { HeatmapProvider } from '@/providers/heatmap'
 
 export class ProviderRegistry {
   private providers: Map<string, HeatmapProvider> = new Map()

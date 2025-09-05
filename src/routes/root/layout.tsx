@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router'
 import { SignedIn, SignedOut, SignIn } from '@clerk/clerk-react'
+
 import { NavBar } from '@/routes/root/NavBar'
 
 export function RootLayout() {
@@ -12,7 +13,7 @@ export function RootLayout() {
       </SignedOut>
 
       <SignedIn>
-        <div className='bg-base-200 flex min-h-screen flex-col'>
+        <div className='flex min-h-screen flex-col bg-gray-950 font-mono text-gray-100'>
           <NavBar />
 
           <div className='mx-auto w-7xl grow p-4'>
