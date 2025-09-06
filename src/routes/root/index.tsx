@@ -1,8 +1,11 @@
+import { useEndeavorQuery } from '@/db/useEndeavorQuery'
 import { useSupabaseClient } from '@/db/useSupabaseClient'
-import { Endeavors } from '@/routes/root/(heatmap)/Endeavors'
+import { Heatmap } from './(heatmap)/Heatmap'
 
 export function IndexPage() {
   const client = useSupabaseClient()
+
+  const { data, refetch } = useEndeavorQuery()
 
   async function formAction(formData: FormData) {
     const platform_id = parseInt(formData.get('platform_id') as string)
@@ -13,7 +16,9 @@ export function IndexPage() {
       username,
     })
 
-    console.log(res.data)
+    refetch()
+
+    console.log(res)
   }
 
   return (
@@ -21,11 +26,11 @@ export function IndexPage() {
       <div className='mx-auto bg-gray-900 p-4'>
         <form action={formAction} className='flex flex-nowrap gap-4'>
           <select
-            defaultValue='Pick a Platform'
-            className='bg-gray-800 p-2'
+            defaultValue='Platform'
+            className='min-w-50 bg-gray-800 p-2'
             name='platform_id'
           >
-            <option disabled={true}>Pick a platform</option>
+            <option disabled={true}>Platform</option>
             <option value={1}>GitHub</option>
             <option value={2}>LeetCode</option>
             <option value={3}>BootDev</option>
@@ -35,7 +40,7 @@ export function IndexPage() {
             name='username'
             type='text'
             placeholder='username'
-            className='bg-gray-800 p-2'
+            className='min-w-50 bg-gray-800 p-2'
           />
 
           <button type='submit' className='bg-gray-800 p-2'>
@@ -44,7 +49,12 @@ export function IndexPage() {
         </form>
       </div>
 
-      <Endeavors />
+      {/* {JSON.stringify(data, null, 1)} */}
+      {data?.map((e) => (
+        <div key={[e.user_id, e.platform].join('-')}>
+          <Heatmap username={e.username ?? ''} platform={e.platform ?? ''} />
+        </div>
+      ))}
     </div>
   )
 }

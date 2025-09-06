@@ -1,4 +1,5 @@
 import { GitHubHeatmapProvider } from '@/providers/GitHubHeatmapProvider'
+import { LeetCodeHeatmapProvider } from '@/providers/LeetCodeHeatmapProvider'
 import type { HeatmapProvider } from '@/providers/heatmap'
 
 export class ProviderRegistry {
@@ -6,6 +7,7 @@ export class ProviderRegistry {
 
   constructor() {
     this.registerProvider(new GitHubHeatmapProvider())
+    this.registerProvider(new LeetCodeHeatmapProvider())
   }
 
   registerProvider(provider: HeatmapProvider): void {
