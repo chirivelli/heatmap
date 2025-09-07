@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useSupabaseClient } from '@/db/useSupabaseClient'
 import type { Database } from '@/db/supabase.types'
 
-type Endeavor = Database['public']['Views']['endeavors_with_platforms']['Row']
+export type Endeavor = Database['public']['Views']['endeavors_with_platforms']['Row']
 
 export function useEndeavorQuery() {
   const { session } = useSession()

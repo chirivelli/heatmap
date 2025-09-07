@@ -1,11 +1,13 @@
 import { useEndeavorQuery } from '@/db/useEndeavorQuery'
 import { useSupabaseClient } from '@/db/useSupabaseClient'
-import { Heatmap } from './(heatmap)/Heatmap'
+import { usePlatformQuery } from '@/db/usePlatformQuery'
+import { Heatmap } from '@/routes/root/(heatmap)/Heatmap'
 
 export function IndexPage() {
   const client = useSupabaseClient()
 
-  const { data, refetch } = useEndeavorQuery()
+  const { data: endeavors, refetch } = useEndeavorQuery()
+  const { data: platforms } = usePlatformQuery()
 
   async function formAction(formData: FormData) {
     const platform_id = parseInt(formData.get('platform_id') as string)
@@ -31,9 +33,11 @@ export function IndexPage() {
             name='platform_id'
           >
             <option disabled={true}>Platform</option>
-            <option value={1}>GitHub</option>
-            <option value={2}>LeetCode</option>
-            <option value={3}>BootDev</option>
+            {platforms?.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.title}
+              </option>
+            ))}
           </select>
 
           <input
@@ -50,7 +54,7 @@ export function IndexPage() {
       </div>
 
       {/* {JSON.stringify(data, null, 1)} */}
-      {data?.map((e) => (
+      {endeavors?.map((e) => (
         <div key={[e.user_id, e.platform].join('-')}>
           <Heatmap username={e.username ?? ''} platform={e.platform ?? ''} />
         </div>
