@@ -1,19 +1,22 @@
 import { useQuery } from '@tanstack/react-query'
-
+import type { SupabaseClient } from '@supabase/supabase-js'
 import { useSupabaseClient } from '@/db/useSupabaseClient'
 import type { Database } from '@/db/supabase.types'
 
 export type Platform = Database['public']['Tables']['platforms']['Row']
+
+export async function findAll(client: SupabaseClient<Database>) {
+  const res = await client.from('platforms').select()
+
+  return res.data ?? []
+}
 
 export function usePlatformQuery() {
   const supabase = useSupabaseClient()
 
   return useQuery<Platform[]>({
     queryKey: ['platforms'],
-    queryFn: async () => {
-      const res = await supabase.from('platforms').select()
-      return res.data ?? []
-    },
+    queryFn: () => findAll(supabase),
     staleTime: 60 * 60 * 1000,
   })
 }

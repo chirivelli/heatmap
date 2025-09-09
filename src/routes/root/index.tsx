@@ -1,6 +1,6 @@
-import { useEndeavorQuery } from '@/db/useEndeavorQuery'
 import { useSupabaseClient } from '@/db/useSupabaseClient'
-import { usePlatformQuery } from '@/db/usePlatformQuery'
+import { usePlatformQuery } from '@/db/platforms'
+import { useEndeavorQuery, save } from '@/db/endeavors'
 import { Heatmap } from '@/routes/root/(heatmap)/Heatmap'
 
 export function IndexPage() {
@@ -13,10 +13,7 @@ export function IndexPage() {
     const platform_id = parseInt(formData.get('platform_id') as string)
     const username = formData.get('username') as string
 
-    const res = await client.from('endeavors').insert({
-      platform_id,
-      username,
-    })
+    const res = await save(client, platform_id, username)
 
     refetch()
 
