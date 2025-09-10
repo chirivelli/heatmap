@@ -1,10 +1,10 @@
-import { useSupabaseClient } from '@/db/useSupabaseClient'
 import { usePlatformQuery } from '@/db/platforms'
 import { useEndeavorQuery, save } from '@/db/endeavors'
 import { Heatmap } from '@/routes/root/(heatmap)/Heatmap'
+import { useSupabase } from '@/db/SupabaseProvider'
 
 export function IndexPage() {
-  const client = useSupabaseClient()
+  const supabase = useSupabase()
 
   const { data: endeavors, refetch } = useEndeavorQuery()
   const { data: platforms } = usePlatformQuery()
@@ -13,7 +13,7 @@ export function IndexPage() {
     const platform_id = parseInt(formData.get('platform_id') as string)
     const username = formData.get('username') as string
 
-    const res = await save(client, platform_id, username)
+    const res = await save(supabase, platform_id, username)
 
     refetch()
 

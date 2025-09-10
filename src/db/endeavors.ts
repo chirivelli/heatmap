@@ -1,8 +1,9 @@
 import { useSession } from '@clerk/clerk-react'
 import { useQuery } from '@tanstack/react-query'
 import type { SignedInSessionResource } from '@clerk/types'
-import { useSupabaseClient } from '@/db/useSupabaseClient'
 import type { SupabaseClient } from '@supabase/supabase-js'
+
+import { useSupabase } from '@/db/SupabaseProvider'
 import type { Database } from '@/db//supabase.types'
 
 export type Endeavor =
@@ -34,7 +35,7 @@ export async function save(
 export function useEndeavorQuery() {
   const { session } = useSession()
 
-  const supabase = useSupabaseClient()
+  const supabase = useSupabase()
 
   return useQuery<Endeavor[]>({
     queryKey: ['endeavors'],

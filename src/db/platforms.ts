@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import type { SupabaseClient } from '@supabase/supabase-js'
-import { useSupabaseClient } from '@/db/useSupabaseClient'
+
+import { useSupabase } from '@/db/SupabaseProvider'
 import type { Database } from '@/db/supabase.types'
 
 export type Platform = Database['public']['Tables']['platforms']['Row']
@@ -12,7 +13,7 @@ export async function findAll(client: SupabaseClient<Database>) {
 }
 
 export function usePlatformQuery() {
-  const supabase = useSupabaseClient()
+  const supabase = useSupabase()
 
   return useQuery<Platform[]>({
     queryKey: ['platforms'],

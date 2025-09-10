@@ -5,6 +5,7 @@ import { ClerkProvider } from '@clerk/clerk-react'
 
 import './index.css'
 import App from './App.tsx'
+import SupabaseProvider from '@/db/SupabaseProvider.tsx'
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
@@ -17,9 +18,11 @@ const queryClient = new QueryClient()
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
+      <SupabaseProvider>
+        <QueryClientProvider client={queryClient}>
+          <App />
+        </QueryClientProvider>
+      </SupabaseProvider>
     </ClerkProvider>
   </StrictMode>,
 )
