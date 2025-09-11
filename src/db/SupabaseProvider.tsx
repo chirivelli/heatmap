@@ -1,4 +1,4 @@
-import { useSession } from '@clerk/clerk-react'
+import { SignedIn, SignedOut, SignIn, useSession } from '@clerk/clerk-react'
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import { createContext, use, useEffect, useState } from 'react'
 import type { Database } from './supabase.types'
@@ -37,7 +37,13 @@ export default function SupabaseProvider({
 
   return (
     <SupabaseContext value={{ supabase, isLoaded }}>
-      {isLoaded && children}
+      <SignedOut>
+        <div className='flex min-h-screen items-center justify-center'>
+          <SignIn />
+        </div>
+      </SignedOut>
+
+      <SignedIn>{isLoaded && children}</SignedIn>
     </SupabaseContext>
   )
 }
