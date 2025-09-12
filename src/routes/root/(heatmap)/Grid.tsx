@@ -1,6 +1,6 @@
 import type { ActivityDataPoint, HeatmapConfig } from '@/providers/heatmap'
 
-export function HeatmapGrid({
+export function Grid({
   data,
   config = {},
   onCellClick,
@@ -106,16 +106,27 @@ export function HeatmapGrid({
               return (
                 <div
                   key={date}
-                  className='hover:ring-opacity-50 cursor-pointer transition-all duration-200 hover:ring-2 hover:ring-blue-400'
+                  className='group relative'
                   style={{
                     width: cellSize,
                     height: cellSize,
-                    backgroundColor: color,
                     margin: cellSpacing / 2,
                   }}
-                  onClick={() => handleCellClick(date, count)}
-                  title={`${formatDate(date)}: ${count} contributions`}
-                />
+                >
+                  <div
+                    className='hover:ring-opacity-50 cursor-pointer transition-all duration-200 hover:ring-2 hover:ring-blue-400'
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      backgroundColor: color,
+                    }}
+                    onClick={() => handleCellClick(date, count)}
+                    aria-label={`${formatDate(date)}: ${count} contributions`}
+                  />
+                  <div className='pointer-events-none absolute -top-1 left-4 z-50 rounded bg-gray-900 px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 shadow-md transition-opacity duration-150 group-hover:opacity-100'>
+                    {count} {count === 1 ? 'contribution' : 'contributions'}
+                  </div>
+                </div>
               )
             })}
           </div>

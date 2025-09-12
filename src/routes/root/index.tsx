@@ -1,13 +1,13 @@
 import { usePlatformQuery } from '@/db/platforms'
 import { useEndeavorQuery, save } from '@/db/endeavors'
-import { Heatmap } from '@/routes/root/(heatmap)/Heatmap'
+import { Activity } from '@/routes/root/(heatmap)/Activity'
 import { useSupabase } from '@/db/SupabaseProvider'
 
 export function IndexPage() {
   const supabase = useSupabase()
 
-  const { data: endeavors, refetch } = useEndeavorQuery()
   const { data: platforms } = usePlatformQuery()
+  const { data: endeavors, refetch } = useEndeavorQuery()
 
   async function formAction(formData: FormData) {
     const platform_id = parseInt(formData.get('platform_id') as string)
@@ -53,7 +53,7 @@ export function IndexPage() {
       {/* {JSON.stringify(data, null, 1)} */}
       {endeavors?.map((e) => (
         <div key={[e.user_id, e.platform].join('-')}>
-          <Heatmap username={e.username ?? ''} platform={e.platform ?? ''} />
+          <Activity username={e.username ?? ''} platform={e.platform ?? ''} />
         </div>
       ))}
     </div>

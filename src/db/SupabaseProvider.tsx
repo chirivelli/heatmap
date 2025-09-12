@@ -11,7 +11,7 @@ export const SupabaseContext = createContext<{
   isLoaded: false,
 })
 
-export default function SupabaseProvider({
+export function SupabaseProvider({
   children,
 }: {
   children: React.ReactNode

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { HeatmapGrid } from '@/routes/root/(heatmap)/HeatmapGrid'
+import { Grid } from '@/routes/root/(heatmap)/Grid'
 import { useProvider } from '@/providers/useProvider'
 import type { ActivityDataPoint } from '@/providers/heatmap'
 
@@ -8,7 +8,7 @@ type HeatMapProps = {
   platform: string
 }
 
-export function Heatmap({ username, platform }: HeatMapProps) {
+export function Activity({ username, platform }: HeatMapProps) {
   const provider = useProvider(platform)
 
   const { data, isFetching, isError, error, isSuccess } = useQuery<
@@ -62,7 +62,7 @@ export function Heatmap({ username, platform }: HeatMapProps) {
           </div>
 
           <div className='overflow-x-auto'>
-            <HeatmapGrid
+            <Grid
               data={data}
               onCellClick={(date: string, count: number) => {
                 console.log(`Clicked on ${date}: ${count} contributions`)
