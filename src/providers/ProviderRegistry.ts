@@ -1,6 +1,7 @@
 import { GitHubHeatmapProvider } from '@/providers/GitHubHeatmapProvider'
 import { LeetCodeHeatmapProvider } from '@/providers/LeetCodeHeatmapProvider'
 import type { HeatmapProvider } from '@/providers/heatmap'
+import { CodeforcesHeatmapProvider } from './CodeforcesHeatmapProvider'
 
 export class ProviderRegistry {
   private providers: Map<string, HeatmapProvider> = new Map()
@@ -8,6 +9,7 @@ export class ProviderRegistry {
   constructor() {
     this.registerProvider(new GitHubHeatmapProvider())
     this.registerProvider(new LeetCodeHeatmapProvider())
+    this.registerProvider(new CodeforcesHeatmapProvider())
   }
 
   registerProvider(provider: HeatmapProvider): void {
