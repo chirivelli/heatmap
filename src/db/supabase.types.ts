@@ -1,4 +1,4 @@
-// bunx supabase gen types typescript --project-id rzbygjyhrihipaiocjiu > src/db/db.types.ts
+// bunx supabase gen types typescript --project-id rzbygjyhrihipaiocjiu > src/db/supabase.types.ts
 
 export type Json =
   | string
@@ -40,6 +40,13 @@ export type Database = {
             foreignKeyName: 'endeavors_platform_id_fkey'
             columns: ['platform_id']
             isOneToOne: false
+            referencedRelation: 'endeavors_with_platforms'
+            referencedColumns: ['platform_id']
+          },
+          {
+            foreignKeyName: 'endeavors_platform_id_fkey'
+            columns: ['platform_id']
+            isOneToOne: false
             referencedRelation: 'platforms'
             referencedColumns: ['id']
           },
@@ -71,6 +78,7 @@ export type Database = {
       endeavors_with_platforms: {
         Row: {
           platform: string | null
+          platform_id: number | null
           user_id: string | null
           username: string | null
         }

@@ -50,10 +50,15 @@ export function IndexPage() {
         </form>
       </div>
 
-      {/* {JSON.stringify(data, null, 1)} */}
+      {/* {JSON.stringify(endeavors, null, 2)} */}
       {endeavors?.map((e) => (
         <div key={[e.user_id, e.platform].join('-')}>
-          <Activity username={e.username ?? ''} platform={e.platform ?? ''} />
+          <Activity
+            username={e.username ?? ''}
+            platform={e.platform ?? ''}
+            platform_id={e.platform_id ?? 0}
+            refetch={refetch}
+          />
         </div>
       ))}
     </div>

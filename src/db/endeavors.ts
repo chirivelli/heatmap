@@ -32,6 +32,18 @@ export async function save(
   })
 }
 
+export async function remove(
+  client: SupabaseClient<Database>,
+  platform_id: number,
+  username: string,
+) {
+  return await client
+    .from('endeavors')
+    .delete()
+    .eq('platform_id', platform_id)
+    .eq('username', username)
+}
+
 export function useEndeavorQuery() {
   const { session } = useSession()
 
