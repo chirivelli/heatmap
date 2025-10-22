@@ -126,6 +126,7 @@ export function Activity({
       </div>
       <div className='p-6'>
         <button
+          className='cursor-pointer'
           onClick={async () => {
             await remove(supabase, platform_id, username)
             refetch()
