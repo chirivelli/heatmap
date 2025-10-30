@@ -22,11 +22,14 @@ export function IndexPage() {
 
   return (
     <div className='grid gap-4'>
-      <div className='mx-auto bg-gray-900 p-4'>
-        <form action={formAction} className='flex flex-nowrap gap-4'>
+      <div className='mx-auto w-full max-w-2xl border border-gray-900 bg-black p-4 sm:p-6'>
+        <form
+          action={formAction}
+          className='flex flex-col gap-3 sm:flex-row sm:gap-4'
+        >
           <select
             defaultValue='Platform'
-            className='min-w-50 bg-gray-800 p-2'
+            className='w-full border border-gray-800 bg-black px-3 py-2 text-white focus:border-gray-600 focus:outline-none sm:w-auto sm:min-w-[140px]'
             name='platform_id'
           >
             <option disabled={true}>Platform</option>
@@ -41,10 +44,13 @@ export function IndexPage() {
             name='username'
             type='text'
             placeholder='username'
-            className='min-w-50 bg-gray-800 p-2'
+            className='w-full flex-1 border border-gray-800 bg-black px-3 py-2 text-white placeholder-gray-500 focus:border-gray-600 focus:outline-none sm:min-w-[120px]'
           />
 
-          <button type='submit' className='bg-gray-800 p-2'>
+          <button
+            type='submit'
+            className='w-full border border-gray-800 bg-black px-4 py-2 text-white transition-colors hover:border-gray-600 sm:w-auto sm:px-6'
+          >
             + Add
           </button>
         </form>

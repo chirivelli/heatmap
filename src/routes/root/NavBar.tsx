@@ -1,14 +1,11 @@
 import { UserButton } from '@clerk/clerk-react'
 
-import fire from '@/asssets/fire-emoji.png'
-
 export function NavBar() {
   return (
-    <div className='flex justify-between bg-gray-900 p-4'>
+    <div className='flex items-center justify-between border-b border-gray-900 bg-black px-4 py-3 sm:px-6 sm:py-4'>
       <div>
-        <a className='flex items-end text-xl'>
-          <img src={fire} alt='pixelated flame emoji' className='size-8' />
-          <span>HeatMap</span>
+        <a className='flex items-end text-lg text-white transition-colors hover:text-gray-300 sm:text-xl'>
+          <span className='font-bold'>HeatMap</span>
         </a>
       </div>
 

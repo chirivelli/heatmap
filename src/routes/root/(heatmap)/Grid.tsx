@@ -14,7 +14,7 @@ export function Grid({
     endDate: new Date(),
     cellSize: 12,
     cellSpacing: 2,
-    colors: ['#23272f', '#264d3b', '#2e7d4f', '#44c06f', '#a6f6c1'],
+    colors: ['#111111', '#333333', '#666666', '#999999', '#cccccc'],
     ...config,
   }
 
@@ -114,7 +114,7 @@ export function Grid({
                   }}
                 >
                   <div
-                    className='hover:ring-opacity-50 cursor-pointer transition-all duration-200 hover:ring-2 hover:ring-blue-400'
+                    className='hover:ring-opacity-50 cursor-pointer transition-all duration-200 hover:ring-2 hover:ring-white'
                     style={{
                       width: '100%',
                       height: '100%',
@@ -123,7 +123,7 @@ export function Grid({
                     onClick={() => handleCellClick(date, count)}
                     aria-label={`${formatDate(date)}: ${count} contributions`}
                   />
-                  <div className='pointer-events-none absolute -top-1 left-4 z-50 rounded bg-gray-900 px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 shadow-md transition-opacity duration-150 group-hover:opacity-100'>
+                  <div className='pointer-events-none absolute -top-8 left-1/2 z-50 -translate-x-1/2 transform rounded border border-gray-700 bg-gray-800 px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 transition-opacity duration-150 group-hover:opacity-100 sm:-top-1 sm:left-4 sm:transform-none'>
                     {count} {count === 1 ? 'contribution' : 'contributions'}
                   </div>
                 </div>
@@ -133,7 +133,7 @@ export function Grid({
         ))}
       </div>
 
-      <div className='text-xs text-gray-500'>
+      <div className='text-xs text-gray-400'>
         {dates.length} days of activity
       </div>
     </div>

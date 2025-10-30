@@ -30,13 +30,13 @@ export function Activity({
   })
 
   return (
-    <div className='max-w-8xl mx-auto flex justify-between bg-gray-900'>
-      <div className='p-6'>
+    <div className='mx-auto flex w-full max-w-6xl flex-col justify-between border border-gray-900 bg-black sm:flex-row'>
+      <div className='flex-1 p-4 sm:p-6'>
         {isFetching && (
           <div className='p-8 text-center'>
-            <div className='inline-flex items-center px-4 py-2 leading-6 font-semibold text-blue-600'>
+            <div className='inline-flex items-center px-4 py-2 leading-6 font-semibold text-white'>
               <svg
-                className='mr-3 -ml-1 h-5 w-5 animate-spin text-blue-600'
+                className='mr-3 -ml-1 h-5 w-5 animate-spin text-white'
                 xmlns='http://www.w3.org/2000/svg'
                 fill='none'
                 viewBox='0 0 24 24'
@@ -63,23 +63,25 @@ export function Activity({
         {!isFetching && Array.isArray(data) && data.length > 0 && (
           <div>
             <div className='mb-4'>
-              <h2 className='mb-2 text-xl font-semibold text-gray-100'>
+              <h2 className='mb-2 text-xl font-semibold text-white'>
                 {username}'s Activity on {platform}
               </h2>
-              <p className='text-gray-200'>
+              <p className='text-gray-300'>
                 Total contributions:{' '}
                 {data.reduce((sum, point) => sum + point.count, 0)}
               </p>
             </div>
 
-            <div className='overflow-x-auto'>
-              <Grid
-                data={data}
-                onCellClick={(date: string, count: number) => {
-                  console.log(`Clicked on ${date}: ${count} contributions`)
-                  // You can add more detailed tooltips or modals here
-                }}
-              />
+            <div className='overflow-x-auto overflow-y-hidden'>
+              <div className='min-w-max'>
+                <Grid
+                  data={data}
+                  onCellClick={(date: string, count: number) => {
+                    console.log(`Clicked on ${date}: ${count} contributions`)
+                    // You can add more detailed tooltips or modals here
+                  }}
+                />
+              </div>
             </div>
           </div>
         )}
@@ -90,8 +92,8 @@ export function Activity({
           Array.isArray(data) &&
           data.length === 0 &&
           username && (
-            <div className='rounded-lg bg-white p-8 text-center'>
-              <div className='text-gray-500'>
+            <div className='rounded-lg border border-gray-900 bg-black p-8 text-center'>
+              <div className='text-gray-400'>
                 <p className='text-lg'>No data found for "{username}"</p>
                 <p className='mt-2 text-sm'>
                   Try a different username or platform
@@ -101,11 +103,11 @@ export function Activity({
           )}
 
         {isError && error && (
-          <div className='border border-red-200 bg-red-50 p-4'>
+          <div className='border border-red-900 bg-red-950 p-4'>
             <div className='flex'>
               <div className='flex-shrink-0'>
                 <svg
-                  className='h-5 w-5 text-red-400'
+                  className='h-5 w-5 text-red-500'
                   viewBox='0 0 20 20'
                   fill='currentColor'
                 >
@@ -117,16 +119,16 @@ export function Activity({
                 </svg>
               </div>
               <div className='ml-3'>
-                <h3 className='text-sm font-medium text-red-800'>Error</h3>
-                <div className='mt-2 text-sm text-red-700'>{error.message}</div>
+                <h3 className='text-sm font-medium text-red-400'>Error</h3>
+                <div className='mt-2 text-sm text-red-300'>{error.message}</div>
               </div>
             </div>
           </div>
         )}
       </div>
-      <div className='p-6'>
+      <div className='border-t border-gray-900 p-4 sm:border-t-0 sm:border-l sm:p-6'>
         <button
-          className='cursor-pointer'
+          className='cursor-pointer text-sm text-red-400 transition-colors hover:text-red-300 sm:text-base'
           onClick={async () => {
             await remove(supabase, platform_id, username)
             refetch()
