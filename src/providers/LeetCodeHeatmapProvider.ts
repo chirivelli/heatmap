@@ -17,7 +17,10 @@ interface LeetCodeStatsResponse {
 export class LeetCodeHeatmapProvider implements HeatmapProvider {
   name = 'LeetCode'
 
-  async fetchData(username: string): Promise<ActivityDataPoint[]> {
+  async fetchData(
+    username: string,
+    year?: number,
+  ): Promise<ActivityDataPoint[]> {
     try {
       // Fetch data from LeetCode Stats API
       const response = await fetch(
@@ -47,6 +50,14 @@ export class LeetCodeHeatmapProvider implements HeatmapProvider {
         const date = new Date(parseInt(timestamp) * 1000)
         const isoDate = date.toISOString().split('T')[0]
 
+        // Filter by year if specified
+        if (year) {
+          const dataYear = date.getFullYear()
+          if (dataYear !== year) {
+            continue
+          }
+        }
+
         activityData.push({
           date: isoDate,
           count: count,
@@ -57,7 +68,7 @@ export class LeetCodeHeatmapProvider implements HeatmapProvider {
       activityData.sort((a, b) => a.date.localeCompare(b.date))
 
       console.log(
-        `Successfully fetched ${activityData.length} days of LeetCode data for ${username}`,
+        `Successfully fetched ${activityData.length} days of LeetCode data for ${username}${year ? ` (${year})` : ''}`,
       )
 
       return activityData

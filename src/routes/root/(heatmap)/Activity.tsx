@@ -1,5 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
+import { useState, useEffect } from 'react'
 import { Grid } from '@/routes/root/(heatmap)/Grid'
+import { YearNavigation } from '@/routes/root/(heatmap)/YearNavigation'
 import { useProvider } from '@/providers/useProvider'
 import type { ActivityDataPoint } from '@/providers/heatmap'
 import { remove } from '@/db/endeavors'
@@ -20,6 +22,11 @@ export function Activity({
 }: HeatMapProps) {
   const provider = useProvider(platform)
   const supabase = useSupabase()
+  const currentYear = new Date().getFullYear()
+
+  const [selectedYear, setSelectedYear] = useState<number>(currentYear)
+  const [minYear, setMinYear] = useState<number>(currentYear)
+  const [maxYear, setMaxYear] = useState<number>(currentYear)
 
   const { data, isFetching, isError, error, isSuccess } = useQuery<
     ActivityDataPoint[]
@@ -29,14 +36,59 @@ export function Activity({
     staleTime: 1000 * 60 * 5,
   })
 
+  // Detect available years from data
+  useEffect(() => {
+    if (data && data.length > 0) {
+      const years = new Set<number>()
+      data.forEach((point) => {
+        const year = new Date(point.date).getFullYear()
+        years.add(year)
+      })
+
+      const yearArray = Array.from(years).sort((a, b) => a - b)
+      if (yearArray.length > 0) {
+        const min = yearArray[0]
+        const max = yearArray[yearArray.length - 1]
+        setMinYear(min)
+        setMaxYear(Math.max(max, currentYear)) // Ensure current year is always selectable
+        // Reset to current year if not available, otherwise keep current selection
+        if (selectedYear < min || selectedYear > max) {
+          setSelectedYear(currentYear)
+        }
+      }
+    }
+  }, [data, currentYear, selectedYear])
+
+  // Handle year change with URL sync
+  const handleYearChange = (year: number) => {
+    setSelectedYear(year)
+  }
+
+  // Filter data for selected year
+  const filteredData =
+    data
+      ?.filter((point) => {
+        const year = new Date(point.date).getFullYear()
+        return year === selectedYear
+      })
+      .map((point) => ({
+        ...point,
+        // Ensure we have data for the filtered year
+      })) || []
+
+  // Get date range for selected year
+  const startDate = new Date(selectedYear, 0, 1)
+  const endDate =
+    selectedYear === currentYear ? new Date() : new Date(selectedYear, 11, 31)
+
   return (
-    <div className='mx-auto flex w-full max-w-6xl flex-col justify-between border border-gray-900 bg-black sm:flex-row'>
-      <div className='flex-1 p-4 sm:p-6'>
+    <div className='mx-auto w-full max-w-6xl border border-gray-900 bg-black'>
+      <div className='flex flex-col gap-4 p-4 sm:p-6'>
         {isFetching && (
-          <div className='p-8 text-center'>
-            <div className='inline-flex items-center px-4 py-2 leading-6 font-semibold text-white'>
+          <div className='flex justify-center py-8'>
+            <div className='inline-flex items-center gap-3 px-4 py-2 font-semibold text-white'>
               <svg
-                className='mr-3 -ml-1 h-5 w-5 animate-spin text-white'
+                className='h-5 w-5 animate-spin'
                 xmlns='http://www.w3.org/2000/svg'
                 fill='none'
                 viewBox='0 0 24 24'
@@ -61,21 +113,54 @@ export function Activity({
         )}
 
         {!isFetching && Array.isArray(data) && data.length > 0 && (
-          <div>
-            <div className='mb-4'>
-              <h2 className='mb-2 text-xl font-semibold text-white'>
-                {username}'s Activity on {platform}
-              </h2>
-              <p className='text-gray-300'>
-                Total contributions:{' '}
-                {data.reduce((sum, point) => sum + point.count, 0)}
-              </p>
+          <>
+            <div className='flex flex-wrap items-center justify-between gap-2'>
+              <div className='inline-flex items-center gap-2 rounded-full border border-gray-700 bg-gray-900 px-3 py-1.5'>
+                <span className='text-sm font-medium text-white'>
+                  {platform}
+                </span>
+                <span className='text-xs text-gray-500'>/</span>
+                <span className='text-sm font-medium text-gray-300'>
+                  {username}
+                </span>
+              </div>
+
+              <div className='flex items-center gap-2'>
+                <YearNavigation
+                  selectedYear={selectedYear}
+                  minYear={minYear}
+                  maxYear={maxYear}
+                  onYearChange={handleYearChange}
+                />
+
+                <button
+                  className='inline-flex items-center gap-1 rounded-full border border-red-900 bg-red-950 px-3 py-1.5 text-sm font-medium text-red-400 transition-colors hover:bg-red-900 hover:text-red-300'
+                  onClick={async () => {
+                    await remove(supabase, platform_id, username)
+                    refetch()
+                  }}
+                  aria-label='Delete this endeavor'
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+
+            <div className='text-sm text-gray-300'>
+              Total contributions in {selectedYear}:{' '}
+              <span className='font-semibold text-white'>
+                {filteredData.reduce((sum, point) => sum + point.count, 0)}
+              </span>
             </div>
 
             <div className='overflow-x-auto overflow-y-hidden'>
               <div className='min-w-max'>
                 <Grid
-                  data={data}
+                  data={filteredData}
+                  config={{
+                    startDate,
+                    endDate,
+                  }}
                   onCellClick={(date: string, count: number) => {
                     console.log(`Clicked on ${date}: ${count} contributions`)
                     // You can add more detailed tooltips or modals here
@@ -83,7 +168,7 @@ export function Activity({
                 />
               </div>
             </div>
-          </div>
+          </>
         )}
 
         {!isFetching &&
@@ -125,17 +210,6 @@ export function Activity({
             </div>
           </div>
         )}
-      </div>
-      <div className='border-t border-gray-900 p-4 sm:border-t-0 sm:border-l sm:p-6'>
-        <button
-          className='cursor-pointer text-sm text-red-400 transition-colors hover:text-red-300 sm:text-base'
-          onClick={async () => {
-            await remove(supabase, platform_id, username)
-            refetch()
-          }}
-        >
-          Delete
-        </button>
       </div>
     </div>
   )

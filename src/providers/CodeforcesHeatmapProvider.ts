@@ -39,7 +39,10 @@ interface CodeforcesResponse {
 export class CodeforcesHeatmapProvider implements HeatmapProvider {
   name = 'Codeforces'
 
-  async fetchData(username: string): Promise<ActivityDataPoint[]> {
+  async fetchData(
+    username: string,
+    year?: number,
+  ): Promise<ActivityDataPoint[]> {
     try {
       // Fetch data from Codeforces API
       const response = await fetch(
@@ -67,6 +70,14 @@ export class CodeforcesHeatmapProvider implements HeatmapProvider {
         const date = new Date(submission.creationTimeSeconds * 1000)
         const isoDate = date.toISOString().split('T')[0]
 
+        // Filter by year if specified
+        if (year) {
+          const submissionYear = date.getFullYear()
+          if (submissionYear !== year) {
+            continue
+          }
+        }
+
         // Only count successful submissions (verdict === 'OK')
         if (submission.verdict === 'OK') {
           activityMap[isoDate] = (activityMap[isoDate] || 0) + 1
@@ -85,7 +96,7 @@ export class CodeforcesHeatmapProvider implements HeatmapProvider {
       activityData.sort((a, b) => a.date.localeCompare(b.date))
 
       console.log(
-        `Successfully fetched ${activityData.length} days of Codeforces data for ${username}`,
+        `Successfully fetched ${activityData.length} days of Codeforces data for ${username}${year ? ` (${year})` : ''}`,
       )
 
       return activityData

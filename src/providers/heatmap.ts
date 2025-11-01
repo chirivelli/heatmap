@@ -13,5 +13,5 @@ export type HeatmapConfig = {
 
 export type HeatmapProvider = {
   name: string
-  fetchData: (username: string) => Promise<ActivityDataPoint[]>
+  fetchData: (username: string, year?: number) => Promise<ActivityDataPoint[]>
 }

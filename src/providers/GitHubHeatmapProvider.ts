@@ -3,17 +3,20 @@ import type { HeatmapProvider, ActivityDataPoint } from '@/providers/heatmap'
 export class GitHubHeatmapProvider implements HeatmapProvider {
   name = 'GitHub'
 
-  async fetchData(username: string): Promise<ActivityDataPoint[]> {
+  async fetchData(
+    username: string,
+    year?: number,
+  ): Promise<ActivityDataPoint[]> {
     try {
       // First try to get real data from GitHub's GraphQL API
-      const realData = await this.fetchFromGraphQL(username)
+      const realData = await this.fetchFromGraphQL(username, year)
       if (realData.length > 0) {
         return realData
       }
 
       // Fallback to public API validation + mock data if GraphQL fails
       console.warn('GraphQL fetch failed, falling back to mock data')
-      return await this.fetchFromPublicAPI(username)
+      return await this.fetchFromPublicAPI(username, year)
     } catch (error) {
       console.error('Error fetching GitHub data:', error)
       throw new Error(
@@ -24,6 +27,7 @@ export class GitHubHeatmapProvider implements HeatmapProvider {
 
   private async fetchFromGraphQL(
     username: string,
+    year?: number,
   ): Promise<ActivityDataPoint[]> {
     const token = import.meta.env.VITE_GITHUB_TOKEN
 
@@ -97,6 +101,13 @@ export class GitHubHeatmapProvider implements HeatmapProvider {
       weeks.forEach((week: any) => {
         week.contributionDays.forEach((day: any) => {
           if (day.date) {
+            // Filter by year if specified
+            if (year) {
+              const dayYear = new Date(day.date).getFullYear()
+              if (dayYear !== year) {
+                return
+              }
+            }
             data.push({
               date: day.date,
               count: day.contributionCount,
@@ -106,7 +117,7 @@ export class GitHubHeatmapProvider implements HeatmapProvider {
       })
 
       console.log(
-        `Successfully fetched ${data.length} days of GitHub data for ${username}`,
+        `Successfully fetched ${data.length} days of GitHub data for ${username}${year ? ` (${year})` : ''}`,
       )
       return data
     } catch (error) {
@@ -117,6 +128,7 @@ export class GitHubHeatmapProvider implements HeatmapProvider {
 
   private async fetchFromPublicAPI(
     username: string,
+    year?: number,
   ): Promise<ActivityDataPoint[]> {
     try {
       // Use GitHub's public API to get user info first
@@ -134,21 +146,36 @@ export class GitHubHeatmapProvider implements HeatmapProvider {
       // For now, we'll generate mock data based on a realistic pattern
       // In a production app, you might want to use GitHub's GraphQL API with proper authentication
       // or implement a server-side proxy to avoid CORS issues
-      return this.generateRealisticGitHubData()
+      return this.generateRealisticGitHubData(year)
     } catch (error) {
       console.warn('Public API fetch failed:', error)
       throw error
     }
   }
 
-  private generateRealisticGitHubData(): ActivityDataPoint[] {
+  private generateRealisticGitHubData(year?: number): ActivityDataPoint[] {
     const data: ActivityDataPoint[] = []
     const today = new Date()
 
-    // Generate data for the last 365 days
-    for (let i = 0; i < 365; i++) {
-      const date = new Date(today)
-      date.setDate(date.getDate() - i)
+    // Determine date range
+    let startDate: Date
+    let endDate: Date
+
+    if (year) {
+      // Generate data for the specified year
+      startDate = new Date(year, 0, 1)
+      endDate = new Date(year, 11, 31)
+    } else {
+      // Generate data for the last 365 days
+      endDate = today
+      startDate = new Date(today)
+      startDate.setDate(startDate.getDate() - 365)
+    }
+
+    // Generate data for the date range
+    const current = new Date(startDate)
+    while (current <= endDate) {
+      const date = new Date(current)
 
       // Simulate realistic GitHub contribution patterns
       const dayOfWeek = date.getDay()
@@ -169,8 +196,8 @@ export class GitHubHeatmapProvider implements HeatmapProvider {
         }
 
         // Add some "streak" effects (consecutive active days)
-        if (i > 0 && data[i - 1] && data[i - 1].count > 0) {
-          count = Math.max(count, Math.floor(data[i - 1].count * 0.3)) // Maintain some consistency
+        if (data.length > 0 && data[data.length - 1].count > 0) {
+          count = Math.max(count, Math.floor(data[data.length - 1].count * 0.3)) // Maintain some consistency
         }
       }
 
@@ -178,8 +205,11 @@ export class GitHubHeatmapProvider implements HeatmapProvider {
         date: date.toISOString().split('T')[0],
         count,
       })
+
+      // Move to next day
+      current.setDate(current.getDate() + 1)
     }
 
-    return data.reverse()
+    return data
   }
 }
