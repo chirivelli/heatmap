@@ -23,6 +23,7 @@ export class LeetCodeHeatmapProvider implements HeatmapProvider {
   ): Promise<ActivityDataPoint[]> {
     try {
       // Fetch data from LeetCode Stats API
+      // This API returns ALL historical submissions
       const response = await fetch(
         `https://leetcode-stats.tashif.codes/${username}`,
       )
