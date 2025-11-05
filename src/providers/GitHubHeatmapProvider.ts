@@ -36,10 +36,27 @@ export class GitHubHeatmapProvider implements HeatmapProvider {
       return []
     }
 
+    // Determine date range for the query
+    let fromDate: string
+    let toDate: string
+
+    if (year) {
+      // Fetch specific year
+      fromDate = `${year}-01-01T00:00:00Z`
+      toDate = `${year}-12-31T23:59:59Z`
+    } else {
+      // Fetch last 10 years of data to detect available years
+      const to = new Date()
+      const from = new Date()
+      from.setFullYear(from.getFullYear() - 10)
+      fromDate = from.toISOString()
+      toDate = to.toISOString()
+    }
+
     const query = `
-      query($username: String!) {
+      query($username: String!, $from: DateTime!, $to: DateTime!) {
         user(login: $username) {
-          contributionsCollection {
+          contributionsCollection(from: $from, to: $to) {
             contributionCalendar {
               totalContributions
               weeks {
@@ -63,7 +80,7 @@ export class GitHubHeatmapProvider implements HeatmapProvider {
         },
         body: JSON.stringify({
           query,
-          variables: { username },
+          variables: { username, from: fromDate, to: toDate },
         }),
       })
 
@@ -101,13 +118,6 @@ export class GitHubHeatmapProvider implements HeatmapProvider {
       weeks.forEach((week: any) => {
         week.contributionDays.forEach((day: any) => {
           if (day.date) {
-            // Filter by year if specified
-            if (year) {
-              const dayYear = new Date(day.date).getFullYear()
-              if (dayYear !== year) {
-                return
-              }
-            }
             data.push({
               date: day.date,
               count: day.contributionCount,
@@ -166,10 +176,10 @@ export class GitHubHeatmapProvider implements HeatmapProvider {
       startDate = new Date(year, 0, 1)
       endDate = new Date(year, 11, 31)
     } else {
-      // Generate data for the last 365 days
+      // Generate data for the last 10 years to match GraphQL behavior
       endDate = today
       startDate = new Date(today)
-      startDate.setDate(startDate.getDate() - 365)
+      startDate.setFullYear(startDate.getFullYear() - 10)
     }
 
     // Generate data for the date range

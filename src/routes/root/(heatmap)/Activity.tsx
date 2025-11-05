@@ -31,16 +31,22 @@ export function Activity({
   const { data, isFetching, isError, error, isSuccess } = useQuery<
     ActivityDataPoint[]
   >({
-    queryKey: ['heatmap', platform, username.trim()],
-    queryFn: async () => provider.fetchData(username.trim()),
+    queryKey: ['heatmap', platform, username.trim(), selectedYear],
+    queryFn: async () => provider.fetchData(username.trim(), selectedYear),
     staleTime: 1000 * 60 * 5,
   })
 
-  // Detect available years from data
+  // Detect available years from initial fetch (fetch all years to discover range)
+  const { data: allYearsData } = useQuery<ActivityDataPoint[]>({
+    queryKey: ['heatmap-years', platform, username.trim()],
+    queryFn: async () => provider.fetchData(username.trim()),
+    staleTime: 1000 * 60 * 60, // Cache for 1 hour
+  })
+
   useEffect(() => {
-    if (data && data.length > 0) {
+    if (allYearsData && allYearsData.length > 0) {
       const years = new Set<number>()
-      data.forEach((point) => {
+      allYearsData.forEach((point) => {
         const year = new Date(point.date).getFullYear()
         years.add(year)
       })
@@ -51,35 +57,21 @@ export function Activity({
         const max = yearArray[yearArray.length - 1]
         setMinYear(min)
         setMaxYear(Math.max(max, currentYear)) // Ensure current year is always selectable
-        // Reset to current year if not available, otherwise keep current selection
-        if (selectedYear < min || selectedYear > max) {
-          setSelectedYear(currentYear)
-        }
       }
     }
-  }, [data, currentYear, selectedYear])
+  }, [allYearsData, currentYear])
 
-  // Handle year change with URL sync
+  // Handle year change
   const handleYearChange = (year: number) => {
     setSelectedYear(year)
   }
 
-  // Filter data for selected year
-  const filteredData =
-    data
-      ?.filter((point) => {
-        const year = new Date(point.date).getFullYear()
-        return year === selectedYear
-      })
-      .map((point) => ({
-        ...point,
-        // Ensure we have data for the filtered year
-      })) || []
+  // Use data as-is since provider already filters by year
+  const filteredData = data || []
 
   // Get date range for selected year
   const startDate = new Date(selectedYear, 0, 1)
-  const endDate =
-    selectedYear === currentYear ? new Date() : new Date(selectedYear, 11, 31)
+  const endDate = new Date(selectedYear, 11, 31) // Always show full year
 
   return (
     <div className='mx-auto w-full max-w-6xl border border-gray-900 bg-black'>
@@ -112,7 +104,7 @@ export function Activity({
           </div>
         )}
 
-        {!isFetching && Array.isArray(data) && data.length > 0 && (
+        {!isFetching && Array.isArray(filteredData) && (
           <>
             <div className='flex flex-wrap items-center justify-between gap-2'>
               <div className='inline-flex items-center gap-2 rounded-full border border-gray-700 bg-gray-900 px-3 py-1.5'>
@@ -174,14 +166,32 @@ export function Activity({
         {!isFetching &&
           !isError &&
           isSuccess &&
-          Array.isArray(data) &&
-          data.length === 0 &&
+          allYearsData &&
+          Array.isArray(allYearsData) &&
+          allYearsData.length === 0 &&
           username && (
             <div className='rounded-lg border border-gray-900 bg-black p-8 text-center'>
               <div className='text-gray-400'>
                 <p className='text-lg'>No data found for "{username}"</p>
                 <p className='mt-2 text-sm'>
                   Try a different username or platform
+                </p>
+              </div>
+            </div>
+          )}
+
+        {!isFetching &&
+          !isError &&
+          isSuccess &&
+          allYearsData &&
+          allYearsData.length > 0 &&
+          filteredData.length === 0 &&
+          username && (
+            <div className='rounded-lg border border-gray-900 bg-black p-8 text-center'>
+              <div className='text-gray-400'>
+                <p className='text-lg'>No activity in {selectedYear}</p>
+                <p className='mt-2 text-sm'>
+                  Try selecting a different year
                 </p>
               </div>
             </div>
