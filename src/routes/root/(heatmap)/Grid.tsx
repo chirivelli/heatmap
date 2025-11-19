@@ -1,4 +1,7 @@
-import type { ActivityDataPoint, HeatmapConfig } from '@/providers/heatmap'
+import type {
+  ActivityDataPoint,
+  HeatmapConfig,
+} from '@/providers/heatmap.types'
 
 export function Grid({
   data,
@@ -51,7 +54,9 @@ export function Grid({
   }
 
   // Group dates by month and week for proper calendar layout
-  const groupByMonthAndWeek = (dates: string[]): { month: string; weeks: string[][] }[] => {
+  const groupByMonthAndWeek = (
+    dates: string[],
+  ): { month: string; weeks: string[][] }[] => {
     const monthGroups: { month: string; weeks: string[][] }[] = []
     let currentMonth = ''
     let currentMonthWeeks: string[][] = []
@@ -176,7 +181,8 @@ export function Grid({
                           aria-label={`${formatDate(date)}: ${count} contributions`}
                         />
                         <div className='pointer-events-none absolute -top-8 left-1/2 z-50 -translate-x-1/2 transform rounded border border-gray-700 bg-gray-800 px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 transition-opacity duration-150 group-hover:opacity-100 sm:-top-1 sm:left-4 sm:transform-none'>
-                          {count} {count === 1 ? 'contribution' : 'contributions'}
+                          {count}{' '}
+                          {count === 1 ? 'contribution' : 'contributions'}
                         </div>
                       </div>
                     )

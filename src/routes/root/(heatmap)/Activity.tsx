@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { Grid } from '@/routes/root/(heatmap)/Grid'
 import { YearNavigation } from '@/routes/root/(heatmap)/YearNavigation'
 import { useProvider } from '@/providers/useProvider'
-import type { ActivityDataPoint } from '@/providers/heatmap'
+import type { ActivityDataPoint } from '@/providers/heatmap.types'
 import { remove } from '@/db/endeavors'
 import { useSupabase } from '@/db/SupabaseProvider'
 
@@ -190,9 +190,7 @@ export function Activity({
             <div className='rounded-lg border border-gray-900 bg-black p-8 text-center'>
               <div className='text-gray-400'>
                 <p className='text-lg'>No activity in {selectedYear}</p>
-                <p className='mt-2 text-sm'>
-                  Try selecting a different year
-                </p>
+                <p className='mt-2 text-sm'>Try selecting a different year</p>
               </div>
             </div>
           )}

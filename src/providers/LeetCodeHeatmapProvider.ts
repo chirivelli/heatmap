@@ -1,4 +1,7 @@
-import type { HeatmapProvider, ActivityDataPoint } from '@/providers/heatmap'
+import type {
+  HeatmapProvider,
+  ActivityDataPoint,
+} from '@/providers/heatmap.types'
 
 interface LeetCodeStatsResponse {
   status: string
