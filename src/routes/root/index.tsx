@@ -58,7 +58,10 @@ export function IndexPage() {
 
       {/* {JSON.stringify(endeavors, null, 2)} */}
       {endeavors?.map((e) => (
-        <div key={[e.user_id, e.platform].join('-')}>
+        <div
+          className='overflow-x-auto'
+          key={[e.user_id, e.platform].join('-')}
+        >
           <Activity
             username={e.username ?? ''}
             platform={e.platform ?? ''}
