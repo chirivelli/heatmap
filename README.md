@@ -1,6 +1,78 @@
-# Activity Heatmap
+# Heatmap
 
 A web application that visualizes user activity across different platforms as calendar-style heatmaps.
+
+## Monorepo Structure
+
+This project is organized as a Bun monorepo with multiple applications:
+
+```
+heatmap-monorepo/
+├── apps/
+│   ├── web/          # React + Vite frontend (port 5173)
+│   └── api/          # Hono API server (port 3000)
+└── package.json      # Workspace configuration
+```
+
+## Getting Started
+
+### Prerequisites
+
+- [Bun](https://bun.sh/) v1.0 or higher
+
+### Installation
+
+Install dependencies for all workspaces:
+
+```bash
+bun install
+```
+
+### Development
+
+Run all apps in development mode:
+
+```bash
+bun run dev
+```
+
+Or run individual apps:
+
+```bash
+bun run dev:web  # Web app only
+bun run dev:api  # API server only
+```
+
+### Build
+
+```bash
+bun run build        # Build all apps
+bun run build:web    # Build web only
+bun run build:api    # Build API only
+```
+
+## Applications
+
+### Web App (`apps/web`)
+
+React application built with Vite, featuring:
+
+- React 19 with TypeScript
+- Tailwind CSS
+- Clerk Authentication
+- Supabase Integration
+- TanStack Query
+
+### API Server (`apps/api`)
+
+Hono API server built with Bun:
+
+- TypeScript
+- CORS enabled
+- Endpoints:
+  - `GET /health` - Health check
+  - `GET /api` - Welcome message
+  - `GET /api/hello/:name` - Personalized greeting
 
 ## Features
 
@@ -30,10 +102,10 @@ To add support for a new platform (e.g., LeetCode), simply:
 1. Create a new provider class implementing `HeatmapProvider`:
 
 ```typescript
-import type { HeatmapProvider, ActivityDataPoint } from '@/providers/heatmap'
+import type { HeatmapProvider, ActivityDataPoint } from "@/providers/heatmap";
 
 export class LeetCodeHeatmapProvider implements HeatmapProvider {
-  name = 'leetcode'
+  name = "leetcode";
 
   async fetchData(username: string): Promise<ActivityDataPoint[]> {
     // Implement data fetching logic
@@ -61,8 +133,8 @@ All providers must return data in this standardized format:
 
 ```typescript
 interface ActivityDataPoint {
-  date: string // ISO date string (YYYY-MM-DD)
-  count: number // Activity count for that date
+  date: string; // ISO date string (YYYY-MM-DD)
+  count: number; // Activity count for that date
 }
 ```
 
