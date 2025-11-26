@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import { useState, useEffect } from 'react'
-import { Grid } from '@web/routes/root/(heatmap)/Grid'
-import { YearNavigation } from '@web/routes/root/(heatmap)/YearNavigation'
-import { useProvider } from '@web/providers/useProvider'
-import type { ActivityDataPoint } from '@web/providers/heatmap.types'
-import { useDeleteEndeavor } from '@web/api/endeavors'
+import { Grid } from '@/routes/root/(heatmap)/Grid'
+import { YearNavigation } from '@/routes/root/(heatmap)/YearNavigation'
+import { useProvider } from '@/providers/useProvider'
+import type { ActivityDataPoint } from '@/providers/heatmap.types'
+import { useDeleteEndeavor } from '@/api/endeavors'
 
 type HeatMapProps = {
   userId: string

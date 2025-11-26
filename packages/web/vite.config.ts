@@ -8,8 +8,7 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
-      '@web': path.resolve(__dirname, './src'),
-      '@heatmap/api': path.resolve(__dirname, '../api/src/db'),
+      '@': path.resolve(__dirname, './src'),
     },
   },
   server: {

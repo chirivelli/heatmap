@@ -1,8 +1,8 @@
 import { Outlet } from 'react-router'
 
-import { NavBar } from '@web/routes/root/NavBar'
+import { NavBar } from '@/routes/root/NavBar'
 import { SignedIn, SignedOut, SignIn } from '@clerk/clerk-react'
-import { useSyncUser } from '@web/hooks/useSyncUser'
+import { useSyncUser } from '@/hooks/useSyncUser'
 
 export function RootLayout() {
   // Sync Clerk user to database when signed in

@@ -1,7 +1,7 @@
 import type {
   HeatmapProvider,
   ActivityDataPoint,
-} from '@web/providers/heatmap.types'
+} from '@/providers/heatmap.types'
 
 export class GitHubHeatmapProvider implements HeatmapProvider {
   name = 'GitHub'

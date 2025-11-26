@@ -1,5 +1,5 @@
 {
-  "name": "@heatmap/api",
+  "name": "heatmap-backend",
   "version": "0.0.0",
   "type": "module",
   "exports": {

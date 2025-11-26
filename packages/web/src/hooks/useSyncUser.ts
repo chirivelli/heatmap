@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useUser as useClerkUser } from '@clerk/clerk-react'
-import { useUser, useCreateUser } from '@web/api/users'
+import { useUser, useCreateUser } from '@/api/users'
 
 /**
  * Hook to sync Clerk user with the database

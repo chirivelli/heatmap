@@ -1,7 +1,0 @@
-# Preload scripts before running (currently none needed)
-# Bun natively supports TypeScript path mappings from tsconfig.json
-
-[install]
-# Auto-install behavior: "auto" | "force" | "disable" | "fallback"
-# "auto" - auto-installs when no node_modules found
-auto = "auto"

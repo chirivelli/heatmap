@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import type { Platform } from '@heatmap/api/types';
+import type { Platform } from '@/db/types';
 import { API_URL } from './client';
 
 // API client functions

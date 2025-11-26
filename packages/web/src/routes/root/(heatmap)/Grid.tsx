@@ -1,7 +1,7 @@
 import type {
   ActivityDataPoint,
   HeatmapConfig,
-} from '@web/providers/heatmap.types'
+} from '@/providers/heatmap.types'
 
 export function Grid({
   data,

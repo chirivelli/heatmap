@@ -1,10 +1,10 @@
-import { Activity } from '@web/routes/root/(heatmap)/Activity'
-import { usePlatforms } from '@web/api/platforms'
+import { Activity } from '@/routes/root/(heatmap)/Activity'
+import { usePlatforms } from '@/api/platforms'
 import { useUser } from '@clerk/clerk-react'
 import {
   useUserEndeavorsWithPlatforms,
   useCreateEndeavor,
-} from '@web/api/endeavors'
+} from '@/api/endeavors'
 
 export function IndexPage() {
   const { user } = useUser()

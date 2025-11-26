@@ -9,8 +9,7 @@
 
     "baseUrl": ".",
     "paths": {
-      "@web/*": ["./src/*"],
-      "@heatmap/api/*": ["../../packages/api/src/db/*"]
+      "@/*": ["./src/*"]
     },
 
     /* Bundler mode */

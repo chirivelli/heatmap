@@ -1,4 +1,4 @@
-import { ProviderRegistry } from '@web/providers/ProviderRegistry'
+import { ProviderRegistry } from '@/providers/ProviderRegistry'
 
 export function useProvider(platform: string) {
   const registry = new ProviderRegistry()

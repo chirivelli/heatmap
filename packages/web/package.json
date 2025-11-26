@@ -1,12 +1,14 @@
 {
-  "name": "@heatmap/web",
+  "name": "heatmap-frontend",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "db:pull": "drizzle-kit pull",
+    "db:generate": "drizzle-kit generate"
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.56.0",
@@ -19,11 +21,13 @@
   "devDependencies": {
     "@clerk/types": "^4.97.1",
     "@eslint/js": "^9.39.1",
+    "@neondatabase/serverless": "^1.0.2",
     "@tailwindcss/vite": "^4.1.17",
     "@types/react": "^19.2.6",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
-    "@heatmap/api": "workspace:*",
+    "drizzle-kit": "^0.31.7",
+    "drizzle-orm": "^0.44.7",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",

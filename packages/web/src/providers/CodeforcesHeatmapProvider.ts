@@ -1,7 +1,7 @@
 import type {
   HeatmapProvider,
   ActivityDataPoint,
-} from '@web/providers/heatmap.types'
+} from '@/providers/heatmap.types'
 
 interface CodeforcesSubmission {
   id: number
