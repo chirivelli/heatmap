@@ -15,13 +15,8 @@ app.get('/health', (c) => {
 })
 
 // Basic API routes
-app.get('/api', (c) => {
+app.get('/', (c) => {
   return c.json({ message: 'Welcome to the Heatmap API' })
-})
-
-app.get('/api/hello/:name', (c) => {
-  const name = c.req.param('name')
-  return c.json({ message: `Hello, ${name}!` })
 })
 
 // Mount routes
@@ -29,8 +24,5 @@ app.route('/api/users', users)
 app.route('/api/platforms', platforms)
 app.route('/api/endeavors', endeavors)
 
-const port = process.env.PORT || 3000
-
-console.log(`🚀 Server running at http://localhost:${port}`)
 
 export default app

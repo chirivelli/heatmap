@@ -2,18 +2,6 @@
   "name": "heatmap-backend",
   "version": "0.0.0",
   "type": "module",
-  "exports": {
-    "./types": "./src/db/types.ts"
-  },
-  "scripts": {
-    "dev": "bun run --watch src/index.ts",
-    "build": "bun build src/index.ts --outdir=dist --target=bun",
-    "start": "bun run dist/index.js",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
-    "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio"
-  },
   "dependencies": {
     "hono": "^4.6.14",
     "@neondatabase/serverless": "^1.0.2",
@@ -22,6 +10,7 @@
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "drizzle-kit": "^0.31.7"
+    "drizzle-kit": "^0.31.7",
+    "typescript": "^5.9.3"
   }
 }
