@@ -11,7 +11,6 @@ React application built with Vite, featuring:
 - React 19 with TypeScript
 - Tailwind CSS
 - Clerk Authentication
-- Supabase Integration
 - TanStack Query
 
 ### API Server (`packages/api`)
