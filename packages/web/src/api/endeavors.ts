@@ -14,13 +14,13 @@ export type EndeavorWithPlatform = {
 // API client functions
 export const endeavorsApi = {
   getByUserIdWithPlatforms: async (userId: string): Promise<EndeavorWithPlatform[]> => {
-    const response = await fetch(`${API_URL}/api/endeavors/user/${userId}/with-platforms`);
+    const response = await fetch(`${API_URL}/api/users/${userId}/endeavors/with-platforms`);
     if (!response.ok) throw new Error('Failed to fetch user endeavors with platforms');
     return response.json();
   },
 
   create: async (endeavor: NewEndeavor): Promise<Endeavor> => {
-    const response = await fetch(`${API_URL}/api/endeavors`, {
+    const response = await fetch(`${API_URL}/api/users/${endeavor.userId}/endeavors`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(endeavor),
@@ -30,7 +30,7 @@ export const endeavorsApi = {
   },
 
   delete: async (userId: string, platformId: number): Promise<Endeavor> => {
-    const response = await fetch(`${API_URL}/api/endeavors/${userId}/${platformId}`, {
+    const response = await fetch(`${API_URL}/api/users/${userId}/endeavors/${platformId}`, {
       method: 'DELETE',
     });
     if (!response.ok) throw new Error('Failed to delete endeavor');
@@ -41,7 +41,7 @@ export const endeavorsApi = {
 // React Query hooks
 export const useUserEndeavorsWithPlatforms = (userId: string) => {
   return useQuery({
-    queryKey: ['endeavors', 'user', userId, 'with-platforms'],
+    queryKey: ['users', userId, 'endeavors', 'with-platforms'],
     queryFn: () => endeavorsApi.getByUserIdWithPlatforms(userId),
     enabled: !!userId,
   });
@@ -52,8 +52,10 @@ export const useCreateEndeavor = () => {
 
   return useMutation({
     mutationFn: endeavorsApi.create,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['endeavors'] });
+    onSuccess: (_endeavor, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['users', variables.userId, 'endeavors'],
+      });
     },
   });
 };
@@ -64,8 +66,10 @@ export const useDeleteEndeavor = () => {
   return useMutation({
     mutationFn: ({ userId, platformId }: { userId: string; platformId: number }) =>
       endeavorsApi.delete(userId, platformId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['endeavors'] });
+    onSuccess: (_endeavor, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['users', variables.userId, 'endeavors'],
+      });
     },
   });
 };
