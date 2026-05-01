@@ -1,12 +1,13 @@
 {
-  "name": "heatmap-frontend",
+  "name": "@heatmap/web",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "clean": "rm -rf dist"
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.56.0",

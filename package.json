@@ -1,0 +1,22 @@
+{
+  "name": "heatmap",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "bun@1.3.11",
+  "workspaces": ["packages/*"],
+  "scripts": {
+    "dev": "turbo run dev",
+    "dev:api": "turbo run dev --filter=@heatmap/api",
+    "dev:web": "turbo run dev --filter=@heatmap/web",
+    "build": "turbo run build",
+    "build:api": "turbo run build --filter=@heatmap/api",
+    "build:web": "turbo run build --filter=@heatmap/web",
+    "lint": "turbo run lint",
+    "lint:web": "turbo run lint --filter=@heatmap/web",
+    "lint:api": "turbo run lint --filter=@heatmap/api",
+    "clean": "turbo run clean"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.3"
+  }
+}
