@@ -6,9 +6,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "db:pull": "drizzle-kit pull",
-    "db:generate": "drizzle-kit generate"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.56.0",
@@ -25,8 +23,6 @@
     "@types/react": "^19.2.6",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
-    "drizzle-kit": "^0.31.7",
-    "drizzle-orm": "^0.44.7",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",

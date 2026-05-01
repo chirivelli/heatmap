@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import type { Endeavor, NewEndeavor } from '@/db/types';
+import type { Endeavor, NewEndeavor } from '../../../api/src/db/types';
 import { API_URL } from './client';
 
 // Type for endeavor with platform details

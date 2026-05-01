@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import type { User, NewUser } from '@/db/types';
+import type { User, NewUser } from '../../../api/src/db/types';
 import { API_URL } from './client';
 
 // API client functions
