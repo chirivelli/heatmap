@@ -1,15 +1,9 @@
-import type {
-  HeatmapProvider,
-  ActivityDataPoint,
-} from '@/providers/heatmap.types'
+import type { HeatmapProvider, ActivityDataPoint } from '@/providers/heatmap.types'
 
 export class GitHubHeatmapProvider implements HeatmapProvider {
   name = 'GitHub'
 
-  async fetchData(
-    username: string,
-    year?: number,
-  ): Promise<ActivityDataPoint[]> {
+  async fetchData(username: string, year?: number): Promise<ActivityDataPoint[]> {
     try {
       // First try to get real data from GitHub's GraphQL API
       const realData = await this.fetchFromGraphQL(username, year)
@@ -28,10 +22,7 @@ export class GitHubHeatmapProvider implements HeatmapProvider {
     }
   }
 
-  private async fetchFromGraphQL(
-    username: string,
-    year?: number,
-  ): Promise<ActivityDataPoint[]> {
+  private async fetchFromGraphQL(username: string, year?: number): Promise<ActivityDataPoint[]> {
     const token = import.meta.env.VITE_GITHUB_TOKEN
 
     if (!token || token === 'your_github_token_here') {
@@ -90,14 +81,10 @@ export class GitHubHeatmapProvider implements HeatmapProvider {
 
       if (!response.ok) {
         if (response.status === 401) {
-          throw new Error(
-            'Invalid GitHub token. Please check your VITE_GITHUB_TOKEN.',
-          )
+          throw new Error('Invalid GitHub token. Please check your VITE_GITHUB_TOKEN.')
         }
         if (response.status === 403) {
-          throw new Error(
-            'GitHub API rate limit exceeded or token lacks permissions.',
-          )
+          throw new Error('GitHub API rate limit exceeded or token lacks permissions.')
         }
         throw new Error(`GitHub API error: ${response.status}`)
       }
@@ -112,8 +99,7 @@ export class GitHubHeatmapProvider implements HeatmapProvider {
         throw new Error(`GraphQL error: ${errorMessage}`)
       }
 
-      const weeks =
-        result.data?.user?.contributionsCollection?.contributionCalendar?.weeks
+      const weeks = result.data?.user?.contributionsCollection?.contributionCalendar?.weeks
       if (!weeks) {
         throw new Error('No contribution data found for this user')
       }
@@ -140,15 +126,10 @@ export class GitHubHeatmapProvider implements HeatmapProvider {
     }
   }
 
-  private async fetchFromPublicAPI(
-    username: string,
-    year?: number,
-  ): Promise<ActivityDataPoint[]> {
+  private async fetchFromPublicAPI(username: string, year?: number): Promise<ActivityDataPoint[]> {
     try {
       // Use GitHub's public API to get user info first
-      const userResponse = await fetch(
-        `https://api.github.com/users/${username}`,
-      )
+      const userResponse = await fetch(`https://api.github.com/users/${username}`)
 
       if (!userResponse.ok) {
         if (userResponse.status === 404) {

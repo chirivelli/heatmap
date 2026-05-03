@@ -1,8 +1,8 @@
 import { RouterProvider } from 'react-router'
 import { createBrowserRouter } from 'react-router'
 
-import { RootLayout } from '@/routes/root/layout'
 import { IndexPage } from '@/routes/root'
+import { RootLayout } from '@/routes/root/layout'
 
 const router = createBrowserRouter([
   {

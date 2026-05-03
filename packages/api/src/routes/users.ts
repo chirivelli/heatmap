@@ -1,7 +1,9 @@
-import { Hono } from 'hono'
 import { and, eq } from 'drizzle-orm'
-import { db, schema } from '../db/client'
+import { Hono } from 'hono'
+
 import type { NewEndeavor, NewUser } from '../db/types'
+
+import { db, schema } from '../db/client'
 
 const users = new Hono()
 
@@ -9,10 +11,7 @@ const users = new Hono()
 users.get('/:id', async (c) => {
   try {
     const id = c.req.param('id')
-    const user = await db
-      .select()
-      .from(schema.users)
-      .where(eq(schema.users.id, id))
+    const user = await db.select().from(schema.users).where(eq(schema.users.id, id))
 
     if (user.length === 0) {
       return c.json({ error: 'User not found' }, 404)
@@ -49,18 +48,12 @@ users.get('/:id/endeavors/with-platforms', async (c) => {
         platformUrl: schema.platforms.url,
       })
       .from(schema.endeavors)
-      .leftJoin(
-        schema.platforms,
-        eq(schema.endeavors.platformId, schema.platforms.id),
-      )
+      .leftJoin(schema.platforms, eq(schema.endeavors.platformId, schema.platforms.id))
       .where(eq(schema.endeavors.userId, userId))
 
     return c.json(userEndeavors)
   } catch (error) {
-    return c.json(
-      { error: 'Failed to fetch user endeavors with platforms' },
-      500,
-    )
+    return c.json({ error: 'Failed to fetch user endeavors with platforms' }, 500)
   }
 })
 
@@ -88,12 +81,7 @@ users.delete('/:id/endeavors/:platformId', async (c) => {
 
     const deletedEndeavor = await db
       .delete(schema.endeavors)
-      .where(
-        and(
-          eq(schema.endeavors.userId, userId),
-          eq(schema.endeavors.platformId, platformId),
-        ),
-      )
+      .where(and(eq(schema.endeavors.userId, userId), eq(schema.endeavors.platformId, platformId)))
       .returning()
 
     if (deletedEndeavor.length === 0) {
@@ -105,6 +93,5 @@ users.delete('/:id/endeavors/:platformId', async (c) => {
     return c.json({ error: 'Failed to delete endeavor' }, 500)
   }
 })
-
 
 export default users

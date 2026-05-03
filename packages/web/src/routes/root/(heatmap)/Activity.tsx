@@ -1,10 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
 import { useState, useEffect } from 'react'
+
+import type { ActivityDataPoint } from '@/providers/heatmap.types'
+
+import { useDeleteEndeavor } from '@/api/endeavors'
+import { useProvider } from '@/providers/useProvider'
 import { Grid } from '@/routes/root/(heatmap)/Grid'
 import { YearNavigation } from '@/routes/root/(heatmap)/YearNavigation'
-import { useProvider } from '@/providers/useProvider'
-import type { ActivityDataPoint } from '@/providers/heatmap.types'
-import { useDeleteEndeavor } from '@/api/endeavors'
 
 type HeatMapProps = {
   userId: string
@@ -14,13 +16,7 @@ type HeatMapProps = {
   refetch: any
 }
 
-export function Activity({
-  userId,
-  username,
-  platform,
-  platform_id,
-  refetch,
-}: HeatMapProps) {
+export function Activity({ userId, username, platform, platform_id, refetch }: HeatMapProps) {
   const provider = useProvider(platform)
   const currentYear = new Date().getFullYear()
   const deleteEndeavor = useDeleteEndeavor()
@@ -29,9 +25,7 @@ export function Activity({
   const [minYear, setMinYear] = useState<number>(currentYear)
   const [maxYear, setMaxYear] = useState<number>(currentYear)
 
-  const { data, isFetching, isError, error, isSuccess } = useQuery<
-    ActivityDataPoint[]
-  >({
+  const { data, isFetching, isError, error, isSuccess } = useQuery<ActivityDataPoint[]>({
     queryKey: ['heatmap', platform, username.trim(), selectedYear],
     queryFn: async () => provider.fetchData(username.trim(), selectedYear),
     staleTime: 1000 * 60 * 5,
@@ -109,13 +103,9 @@ export function Activity({
           <>
             <div className='flex flex-wrap items-center justify-between gap-2'>
               <div className='inline-flex items-center gap-2 rounded-full border border-gray-700 bg-gray-900 px-3 py-1.5'>
-                <span className='text-sm font-medium text-white'>
-                  {platform}
-                </span>
+                <span className='text-sm font-medium text-white'>{platform}</span>
                 <span className='text-xs text-gray-500'>/</span>
-                <span className='text-sm font-medium text-gray-300'>
-                  {username}
-                </span>
+                <span className='text-sm font-medium text-gray-300'>{username}</span>
               </div>
 
               <div className='flex items-center gap-2'>
@@ -181,9 +171,7 @@ export function Activity({
             <div className='rounded-lg border border-gray-900 bg-black p-8 text-center'>
               <div className='text-gray-400'>
                 <p className='text-lg'>No data found for "{username}"</p>
-                <p className='mt-2 text-sm'>
-                  Try a different username or platform
-                </p>
+                <p className='mt-2 text-sm'>Try a different username or platform</p>
               </div>
             </div>
           )}
@@ -207,11 +195,7 @@ export function Activity({
           <div className='border border-red-900 bg-red-950 p-4'>
             <div className='flex'>
               <div className='flex-shrink-0'>
-                <svg
-                  className='h-5 w-5 text-red-500'
-                  viewBox='0 0 20 20'
-                  fill='currentColor'
-                >
+                <svg className='h-5 w-5 text-red-500' viewBox='0 0 20 20' fill='currentColor'>
                   <path
                     fillRule='evenodd'
                     d='M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z'

@@ -52,10 +52,10 @@ To add support for a new platform (e.g., LeetCode), simply:
 1. Create a new provider class implementing `HeatmapProvider`:
 
 ```typescript
-import type { HeatmapProvider, ActivityDataPoint } from "@/providers/heatmap";
+import type { HeatmapProvider, ActivityDataPoint } from '@/providers/heatmap'
 
 export class LeetCodeHeatmapProvider implements HeatmapProvider {
-  name = "leetcode";
+  name = 'leetcode'
 
   async fetchData(username: string): Promise<ActivityDataPoint[]> {
     // Implement data fetching logic
@@ -83,8 +83,8 @@ All providers must return data in this standardized format:
 
 ```typescript
 interface ActivityDataPoint {
-  date: string; // ISO date string (YYYY-MM-DD)
-  count: number; // Activity count for that date
+  date: string // ISO date string (YYYY-MM-DD)
+  count: number // Activity count for that date
 }
 ```
 

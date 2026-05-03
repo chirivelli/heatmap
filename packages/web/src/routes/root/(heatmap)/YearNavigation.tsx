@@ -26,24 +26,12 @@ export function YearNavigation({
         }`}
         aria-label='Previous year'
       >
-        <svg
-          className='h-4 w-4'
-          fill='none'
-          stroke='currentColor'
-          viewBox='0 0 24 24'
-        >
-          <path
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            strokeWidth={2}
-            d='M15 19l-7-7 7-7'
-          />
+        <svg className='h-4 w-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+          <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M15 19l-7-7 7-7' />
         </svg>
       </button>
 
-      <div className='min-w-max px-2 text-sm font-semibold text-white'>
-        {selectedYear}
-      </div>
+      <div className='min-w-max px-2 text-sm font-semibold text-white'>{selectedYear}</div>
 
       <button
         onClick={() => onYearChange(selectedYear + 1)}
@@ -55,18 +43,8 @@ export function YearNavigation({
         }`}
         aria-label='Next year'
       >
-        <svg
-          className='h-4 w-4'
-          fill='none'
-          stroke='currentColor'
-          viewBox='0 0 24 24'
-        >
-          <path
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            strokeWidth={2}
-            d='M9 5l7 7-7 7'
-          />
+        <svg className='h-4 w-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+          <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
         </svg>
       </button>
     </div>

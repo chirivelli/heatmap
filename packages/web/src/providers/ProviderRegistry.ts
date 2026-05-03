@@ -1,6 +1,8 @@
+import type { HeatmapProvider } from '@/providers/heatmap.types'
+
 import { GitHubHeatmapProvider } from '@/providers/GitHubHeatmapProvider'
 import { LeetCodeHeatmapProvider } from '@/providers/LeetCodeHeatmapProvider'
-import type { HeatmapProvider } from '@/providers/heatmap.types'
+
 import { CodeforcesHeatmapProvider } from './CodeforcesHeatmapProvider'
 
 export class ProviderRegistry {

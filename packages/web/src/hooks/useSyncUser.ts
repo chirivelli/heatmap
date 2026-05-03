@@ -1,5 +1,6 @@
-import { useEffect, useRef } from 'react'
 import { useUser as useClerkUser } from '@clerk/clerk-react'
+import { useEffect, useRef } from 'react'
+
 import { useUser, useCreateUser } from '@/api/users'
 
 /**
@@ -48,7 +49,7 @@ export function useSyncUser() {
             onError: (err) => {
               console.error('Failed to sync user to database:', err)
             },
-          }
+          },
         )
       }
     }

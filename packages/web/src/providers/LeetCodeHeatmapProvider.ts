@@ -1,7 +1,4 @@
-import type {
-  HeatmapProvider,
-  ActivityDataPoint,
-} from '@/providers/heatmap.types'
+import type { HeatmapProvider, ActivityDataPoint } from '@/providers/heatmap.types'
 
 interface LeetCodeStatsResponse {
   status: string
@@ -20,16 +17,11 @@ interface LeetCodeStatsResponse {
 export class LeetCodeHeatmapProvider implements HeatmapProvider {
   name = 'LeetCode'
 
-  async fetchData(
-    username: string,
-    year?: number,
-  ): Promise<ActivityDataPoint[]> {
+  async fetchData(username: string, year?: number): Promise<ActivityDataPoint[]> {
     try {
       // Fetch data from LeetCode Stats API
       // This API returns ALL historical submissions
-      const response = await fetch(
-        `https://leetcode-stats.tashif.codes/${username}`,
-      )
+      const response = await fetch(`https://leetcode-stats.tashif.codes/${username}`)
 
       if (!response.ok) {
         if (response.status === 404) {
@@ -47,9 +39,7 @@ export class LeetCodeHeatmapProvider implements HeatmapProvider {
       // Convert submission calendar to ActivityDataPoint format
       const activityData: ActivityDataPoint[] = []
 
-      for (const [timestamp, count] of Object.entries(
-        data.submissionCalendar,
-      )) {
+      for (const [timestamp, count] of Object.entries(data.submissionCalendar)) {
         // Convert Unix timestamp to ISO date string
         const date = new Date(parseInt(timestamp) * 1000)
         const isoDate = date.toISOString().split('T')[0]

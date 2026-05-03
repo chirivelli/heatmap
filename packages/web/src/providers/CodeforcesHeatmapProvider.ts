@@ -1,7 +1,4 @@
-import type {
-  HeatmapProvider,
-  ActivityDataPoint,
-} from '@/providers/heatmap.types'
+import type { HeatmapProvider, ActivityDataPoint } from '@/providers/heatmap.types'
 
 interface CodeforcesSubmission {
   id: number
@@ -42,10 +39,7 @@ interface CodeforcesResponse {
 export class CodeforcesHeatmapProvider implements HeatmapProvider {
   name = 'Codeforces'
 
-  async fetchData(
-    username: string,
-    year?: number,
-  ): Promise<ActivityDataPoint[]> {
+  async fetchData(username: string, year?: number): Promise<ActivityDataPoint[]> {
     try {
       // Fetch data from Codeforces API
       const response = await fetch(

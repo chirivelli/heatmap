@@ -1,7 +1,8 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
-import users from './routes/users'
+
 import platforms from './routes/platforms'
+import users from './routes/users'
 
 const app = new Hono()
 
@@ -21,6 +22,5 @@ app.get('/', (c) => {
 // Mount routes
 app.route('/api/users', users)
 app.route('/api/platforms', platforms)
-
 
 export default app
