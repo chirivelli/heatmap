@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 import type { ActivityDataPoint } from '@/providers/heatmap.types'
 
 import { useDeleteEndeavor } from '@/api/endeavors'
 import { useProvider } from '@/providers/useProvider'
-import { Grid } from '@/routes/root/(heatmap)/Grid'
-import { YearNavigation } from '@/routes/root/(heatmap)/YearNavigation'
+import { Grid } from '@/components/heatmap/Grid'
+import { YearNavigation } from '@/components/heatmap/YearNavigation'
 
 type HeatMapProps = {
   userId: string
@@ -214,3 +214,4 @@ export function Activity({ userId, username, platform, platform_id, refetch }: H
     </div>
   )
 }
+

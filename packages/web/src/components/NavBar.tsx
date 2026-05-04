@@ -15,3 +15,4 @@ export function NavBar() {
     </div>
   )
 }
+

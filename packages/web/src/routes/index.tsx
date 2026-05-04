@@ -1,10 +1,15 @@
 import { useUser } from '@clerk/clerk-react'
+import { createFileRoute } from '@tanstack/react-router'
 
-import { useUserEndeavorsWithPlatforms, useCreateEndeavor } from '@/api/endeavors'
+import { useCreateEndeavor, useUserEndeavorsWithPlatforms } from '@/api/endeavors'
 import { usePlatforms } from '@/api/platforms'
-import { Activity } from '@/routes/root/(heatmap)/Activity'
+import { Activity } from '@/components/heatmap/Activity'
 
-export function IndexPage() {
+export const Route = createFileRoute('/')({
+  component: IndexPage,
+})
+
+function IndexPage() {
   const { user } = useUser()
 
   const { data: platforms } = usePlatforms()
@@ -81,3 +86,4 @@ export function IndexPage() {
     </div>
   )
 }
+

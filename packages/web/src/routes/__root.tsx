@@ -1,10 +1,14 @@
 import { SignedIn, SignedOut, SignIn } from '@clerk/clerk-react'
-import { Outlet } from 'react-router'
+import { Outlet, createRootRoute } from '@tanstack/react-router'
 
 import { useSyncUser } from '@/hooks/useSyncUser'
-import { NavBar } from '@/routes/root/NavBar'
+import { NavBar } from '@/components/NavBar'
 
-export function RootLayout() {
+export const Route = createRootRoute({
+  component: RootLayout,
+})
+
+function RootLayout() {
   // Sync Clerk user to database when signed in
   useSyncUser()
 
@@ -28,3 +32,4 @@ export function RootLayout() {
     </>
   )
 }
+
