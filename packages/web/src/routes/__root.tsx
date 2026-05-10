@@ -36,7 +36,10 @@ function RootLayout() {
           <div className='absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.34)_0%,transparent_30%,rgba(0,0,0,0.26)_100%)]' />
 
           <header className='relative z-10 mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-5 sm:px-6 lg:px-8'>
-            <a className='text-xl font-bold tracking-tight text-white'>HeatMap</a>
+            <a className='flex items-center gap-2 text-xl font-bold tracking-tight text-white'>
+              <img src='/brand/heatmap-logo.png' alt='' className='size-8 rounded-md' />
+              <span>HeatMap</span>
+            </a>
 
             <SignInButton mode='modal'>
               <button className='border border-gray-700 bg-white px-4 py-2 text-sm font-semibold text-black transition-colors hover:bg-gray-200 focus:border-emerald-400 focus:outline-none'>
