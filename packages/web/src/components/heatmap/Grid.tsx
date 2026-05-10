@@ -226,8 +226,6 @@ export function Grid({
           </div>
         ))}
       </div>
-
-      <div className='text-xs text-gray-400'>{dates.length} days of activity</div>
     </div>
   )
 }

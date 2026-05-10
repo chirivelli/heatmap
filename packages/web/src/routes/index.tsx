@@ -39,12 +39,15 @@ function IndexPage() {
   }
 
   return (
-    <div className='grid gap-4'>
-      <div className='mx-auto w-full max-w-2xl border border-gray-900 bg-black p-4 sm:p-6'>
-        <form action={formAction} className='flex flex-col gap-3 sm:flex-row sm:gap-4'>
+    <div className='grid gap-6 py-6'>
+      <div className='mx-auto w-full max-w-3xl px-4 sm:px-6'>
+        <form
+          action={formAction}
+          className='flex flex-col gap-2 border border-gray-800 bg-gray-950/60 p-2 shadow-[0_0_0_1px_rgba(255,255,255,0.02)] sm:flex-row sm:items-center'
+        >
           <select
             defaultValue='Platform'
-            className='w-full border border-gray-800 bg-black px-3 py-2 text-white focus:border-gray-600 focus:outline-none sm:w-auto sm:min-w-[140px]'
+            className='h-11 w-full border border-gray-800 bg-black px-3 text-sm font-medium text-white transition-colors focus:border-gray-500 focus:outline-none sm:w-44'
             name='platform_id'
           >
             <option disabled={true}>Platform</option>
@@ -59,12 +62,12 @@ function IndexPage() {
             name='username'
             type='text'
             placeholder='username'
-            className='w-full flex-1 border border-gray-800 bg-black px-3 py-2 text-white placeholder-gray-500 focus:border-gray-600 focus:outline-none sm:min-w-[120px]'
+            className='h-11 w-full flex-1 border border-gray-800 bg-black px-3 text-sm text-white placeholder-gray-500 transition-colors focus:border-gray-500 focus:outline-none sm:min-w-64'
           />
 
           <button
             type='submit'
-            className='w-full border border-gray-800 bg-black px-4 py-2 text-white transition-colors hover:border-gray-600 sm:w-auto sm:px-6'
+            className='h-11 w-full border border-emerald-800 bg-emerald-950 px-5 text-sm font-semibold text-emerald-100 transition-colors hover:border-emerald-600 hover:bg-emerald-900 focus:border-emerald-500 focus:outline-none sm:w-auto'
           >
             + Add
           </button>
@@ -86,4 +89,3 @@ function IndexPage() {
     </div>
   )
 }
-
