@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react'
 import type { ActivityDataPoint } from '@/providers/heatmap.types'
 
 import { useDeleteEndeavor } from '@/api/endeavors'
-import { useProvider } from '@/providers/useProvider'
 import { Grid } from '@/components/heatmap/Grid'
 import { YearNavigation } from '@/components/heatmap/YearNavigation'
+import { useProvider } from '@/providers/useProvider'
 
 type HeatMapProps = {
   userId: string
@@ -143,7 +143,7 @@ export function Activity({ userId, username, platform, platform_id, refetch }: H
               </span>
             </div>
 
-            <div className='overflow-x-auto overflow-y-hidden'>
+            <div className='overflow-x-auto overflow-y-visible'>
               <div className='min-w-max'>
                 <Grid
                   data={filteredData}
@@ -176,21 +176,6 @@ export function Activity({ userId, username, platform, platform_id, refetch }: H
             </div>
           )}
 
-        {!isFetching &&
-          !isError &&
-          isSuccess &&
-          allYearsData &&
-          allYearsData.length > 0 &&
-          filteredData.length === 0 &&
-          username && (
-            <div className='rounded-lg border border-gray-900 bg-black p-8 text-center'>
-              <div className='text-gray-400'>
-                <p className='text-lg'>No activity in {selectedYear}</p>
-                <p className='mt-2 text-sm'>Try selecting a different year</p>
-              </div>
-            </div>
-          )}
-
         {isError && error && (
           <div className='border border-red-900 bg-red-950 p-4'>
             <div className='flex'>
@@ -214,4 +199,3 @@ export function Activity({ userId, username, platform, platform_id, refetch }: H
     </div>
   )
 }
-

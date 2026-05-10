@@ -1,3 +1,6 @@
+import { useState } from 'react'
+import { createPortal } from 'react-dom'
+
 import type { ActivityDataPoint, HeatmapConfig } from '@/providers/heatmap.types'
 
 export function Grid({
@@ -9,12 +12,19 @@ export function Grid({
   config?: Partial<HeatmapConfig>
   onCellClick?: (date: string, count: number) => void
 }) {
+  const [hoveredCell, setHoveredCell] = useState<{
+    date: string
+    count: number
+    left: number
+    top: number
+  } | null>(null)
+
   const defaultConfig: HeatmapConfig = {
     startDate: new Date(new Date().getFullYear(), 0, 1), // Start of current year
     endDate: new Date(),
     cellSize: 8,
     cellSpacing: 1.5,
-    colors: ['#111111', '#333333', '#666666', '#999999', '#cccccc'],
+    colors: ['#111111', '#0e4429', '#006d32', '#26a641', '#39d353'],
     ...config,
   }
 
@@ -51,11 +61,13 @@ export function Grid({
   }
 
   // Group dates by month and week for proper calendar layout
-  const groupByMonthAndWeek = (dates: string[]): { month: string; weeks: string[][] }[] => {
-    const monthGroups: { month: string; weeks: string[][] }[] = []
+  const groupByMonthAndWeek = (
+    dates: string[],
+  ): { month: string; weeks: (string | null)[][] }[] => {
+    const monthGroups: { month: string; weeks: (string | null)[][] }[] = []
     let currentMonth = ''
-    let currentMonthWeeks: string[][] = []
-    let currentWeek: string[] = []
+    let currentMonthWeeks: (string | null)[][] = []
+    let currentWeek: (string | null)[] = []
 
     dates.forEach((date, index) => {
       const dateObj = new Date(date)
@@ -80,7 +92,7 @@ export function Grid({
 
         // Add empty days at the start of the first week if it doesn't start on Sunday
         if (dayOfWeek !== 0) {
-          currentWeek = new Array(dayOfWeek).fill(null)
+          currentWeek = Array.from({ length: dayOfWeek }, () => null)
         }
       }
 
@@ -113,16 +125,42 @@ export function Grid({
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString)
     return date.toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
+      weekday: 'short',
+      month: 'short',
       day: 'numeric',
+    })
+  }
+
+  const handleCellHover = (date: string, count: number, cellElement: HTMLDivElement) => {
+    const cellRect = cellElement.getBoundingClientRect()
+
+    setHoveredCell({
+      date,
+      count,
+      left: cellRect.left + cellRect.width / 2,
+      top: cellRect.top - 8,
     })
   }
 
   return (
     <div className='flex flex-col items-start gap-4'>
-      <div className='flex flex-wrap gap-6'>
+      {hoveredCell
+        ? createPortal(
+            <div
+              className='pointer-events-none fixed z-50 flex min-w-24 -translate-x-1/2 -translate-y-full flex-col items-center border border-gray-700 bg-[#080808] px-4 py-2 text-center text-gray-400 shadow-lg'
+              style={{ left: hoveredCell.left, top: hoveredCell.top }}
+            >
+              <div className='text-sm font-semibold text-white'>{hoveredCell.count}</div>
+              <div className='text-xs'>
+                {hoveredCell.count === 1 ? 'contribution' : 'contributions'}
+              </div>
+              <div className='mt-1 text-xs'>{formatDate(hoveredCell.date)}</div>
+            </div>,
+            document.body,
+          )
+        : null}
+
+      <div className='relative flex flex-wrap gap-6'>
         {monthGroups.map((monthGroup, monthIndex) => (
           <div key={monthIndex} className='flex flex-col gap-2'>
             <div className='text-xs font-medium text-gray-400'>{monthGroup.month}</div>
@@ -130,7 +168,7 @@ export function Grid({
               {monthGroup.weeks.map((week, weekIndex) => (
                 <div
                   key={weekIndex}
-                  className='flex flex-col gap-1'
+                  className='relative flex flex-col gap-1'
                   style={{
                     minHeight: 7 * (cellSize + cellSpacing),
                   }}
@@ -170,12 +208,15 @@ export function Grid({
                             height: '100%',
                             backgroundColor: color,
                           }}
+                          onMouseEnter={(event) =>
+                            handleCellHover(date, count, event.currentTarget)
+                          }
+                          onMouseLeave={() => setHoveredCell(null)}
+                          onFocus={(event) => handleCellHover(date, count, event.currentTarget)}
+                          onBlur={() => setHoveredCell(null)}
                           onClick={() => handleCellClick(date, count)}
                           aria-label={`${formatDate(date)}: ${count} contributions`}
                         />
-                        <div className='pointer-events-none absolute -top-8 left-1/2 z-50 -translate-x-1/2 transform rounded border border-gray-700 bg-gray-800 px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 transition-opacity duration-150 group-hover:opacity-100 sm:-top-1 sm:left-4 sm:transform-none'>
-                          {count} {count === 1 ? 'contribution' : 'contributions'}
-                        </div>
                       </div>
                     )
                   })}
@@ -190,4 +231,3 @@ export function Grid({
     </div>
   )
 }
-
