@@ -1,4 +1,5 @@
 import type { HeatmapProvider, ActivityDataPoint } from '@/providers/heatmap.types'
+import { env } from '@/env'
 
 export class GitHubHeatmapProvider implements HeatmapProvider {
   name = 'GitHub'
@@ -23,7 +24,7 @@ export class GitHubHeatmapProvider implements HeatmapProvider {
   }
 
   private async fetchFromGraphQL(username: string, year?: number): Promise<ActivityDataPoint[]> {
-    const token = import.meta.env.VITE_GITHUB_TOKEN
+    const token = env.VITE_GITHUB_TOKEN
 
     if (!token || token === 'your_github_token_here') {
       console.warn('No GitHub token provided, skipping GraphQL fetch')

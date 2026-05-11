@@ -1,5 +1,7 @@
+import { env } from '@/env'
+
 // Shared API configuration
-export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+export const API_URL = env.VITE_API_URL
 
 // Generic fetch wrapper with error handling
 export async function apiRequest<T>(endpoint: string, options?: RequestInit): Promise<T> {
