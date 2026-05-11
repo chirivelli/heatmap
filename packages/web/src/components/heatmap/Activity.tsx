@@ -64,6 +64,13 @@ export function Activity({ userId, username, platform, platform_id, refetch }: H
 
   // Use data as-is since provider already filters by year
   const filteredData = data || []
+  const hasNoData =
+    !isError &&
+    isSuccess &&
+    allYearsData &&
+    Array.isArray(allYearsData) &&
+    allYearsData.length === 0 &&
+    username
 
   // Get date range for selected year
   const startDate = new Date(selectedYear, 0, 1)
@@ -72,58 +79,57 @@ export function Activity({ userId, username, platform, platform_id, refetch }: H
   return (
     <div className='mx-auto w-full max-w-6xl border border-gray-900 bg-black'>
       <div className='flex flex-col gap-4 p-4 sm:p-6'>
-        {isFetching && (
-          <div className='flex justify-center py-8'>
+        <div className='flex flex-wrap items-center justify-between gap-2'>
+          <div className='inline-flex items-center gap-2 rounded-full border border-gray-700 bg-gray-900 px-3 py-1.5'>
+            <span className='text-sm font-medium text-white'>{platform}</span>
+            <span className='text-xs text-gray-500'>/</span>
+            <span className='text-sm font-medium text-gray-300'>{username}</span>
+          </div>
+
+          <div className='flex items-center gap-2'>
+            <YearNavigation
+              selectedYear={selectedYear}
+              minYear={minYear}
+              maxYear={maxYear}
+              onYearChange={handleYearChange}
+            />
+
+            <button
+              className='inline-flex items-center gap-1 rounded-full border border-red-900 bg-red-950 px-3 py-1.5 text-sm font-medium text-red-400 transition-colors hover:bg-red-900 hover:text-red-300'
+              onClick={async () => {
+                try {
+                  await deleteEndeavor.mutateAsync({
+                    userId,
+                    platformId: platform_id,
+                  })
+                  refetch()
+                } catch (error) {
+                  console.error('Failed to delete endeavor:', error)
+                }
+              }}
+              aria-label='Delete this endeavor'
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+
+        {isFetching ? (
+          <div className='flex min-h-37.5 items-center justify-center py-8'>
             <div className='inline-flex items-center gap-3 px-4 py-2 font-semibold text-white'>
-              <DotmSquare5
-                ariaLabel='Fetching data'
-                size={32}
-                dotSize={4}
-                speed={1.2}
-                bloom
-              />
+              <DotmSquare5 ariaLabel='Fetching data' size={32} dotSize={4} speed={1.2} bloom />
               Fetching data ...
             </div>
           </div>
-        )}
-
-        {!isFetching && Array.isArray(filteredData) && (
-          <>
-            <div className='flex flex-wrap items-center justify-between gap-2'>
-              <div className='inline-flex items-center gap-2 rounded-full border border-gray-700 bg-gray-900 px-3 py-1.5'>
-                <span className='text-sm font-medium text-white'>{platform}</span>
-                <span className='text-xs text-gray-500'>/</span>
-                <span className='text-sm font-medium text-gray-300'>{username}</span>
-              </div>
-
-              <div className='flex items-center gap-2'>
-                <YearNavigation
-                  selectedYear={selectedYear}
-                  minYear={minYear}
-                  maxYear={maxYear}
-                  onYearChange={handleYearChange}
-                />
-
-                <button
-                  className='inline-flex items-center gap-1 rounded-full border border-red-900 bg-red-950 px-3 py-1.5 text-sm font-medium text-red-400 transition-colors hover:bg-red-900 hover:text-red-300'
-                  onClick={async () => {
-                    try {
-                      await deleteEndeavor.mutateAsync({
-                        userId,
-                        platformId: platform_id,
-                      })
-                      refetch()
-                    } catch (error) {
-                      console.error('Failed to delete endeavor:', error)
-                    }
-                  }}
-                  aria-label='Delete this endeavor'
-                >
-                  Delete
-                </button>
-              </div>
+        ) : hasNoData ? (
+          <div className='border border-gray-900 bg-black p-8 text-center'>
+            <div className='text-gray-400'>
+              <p className='text-lg'>No data found for "{username}"</p>
+              <p className='mt-2 text-sm'>Try a different username or platform</p>
             </div>
-
+          </div>
+        ) : !isError && Array.isArray(filteredData) ? (
+          <>
             <div className='text-sm text-gray-300'>
               Total contributions in {selectedYear}:{' '}
               <span className='font-semibold text-white'>
@@ -147,22 +153,7 @@ export function Activity({ userId, username, platform, platform_id, refetch }: H
               </div>
             </div>
           </>
-        )}
-
-        {!isFetching &&
-          !isError &&
-          isSuccess &&
-          allYearsData &&
-          Array.isArray(allYearsData) &&
-          allYearsData.length === 0 &&
-          username && (
-            <div className='rounded-lg border border-gray-900 bg-black p-8 text-center'>
-              <div className='text-gray-400'>
-                <p className='text-lg'>No data found for "{username}"</p>
-                <p className='mt-2 text-sm'>Try a different username or platform</p>
-              </div>
-            </div>
-          )}
+        ) : null}
 
         {isError && error && (
           <div className='border border-red-900 bg-red-950 p-4'>
