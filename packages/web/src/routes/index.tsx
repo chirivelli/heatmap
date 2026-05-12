@@ -1,5 +1,6 @@
 import { useUser } from '@clerk/clerk-react'
 import { createFileRoute } from '@tanstack/react-router'
+import { useEffect, useState } from 'react'
 
 import { useCreateEndeavor, useUserEndeavorsWithPlatforms } from '@/api/endeavors'
 import { usePlatforms } from '@/api/platforms'
@@ -17,13 +18,27 @@ function IndexPage() {
   const { data: endeavors, refetch } = useUserEndeavorsWithPlatforms(user?.id ?? '')
   const createEndeavor = useCreateEndeavor()
   const hasNoEndeavors = Array.isArray(endeavors) && endeavors.length === 0
+  const addedPlatformIds = new Set(endeavors?.map((endeavor) => endeavor.platformId))
+  const [selectedPlatformId, setSelectedPlatformId] = useState<number | null>(null)
+  const selectedPlatformIndex = Math.max(
+    0,
+    platforms?.findIndex((platform) => platform.id === selectedPlatformId) ?? 0,
+  )
+
+  useEffect(() => {
+    const firstAvailablePlatform = platforms?.find((platform) => !addedPlatformIds.has(platform.id))
+
+    if (selectedPlatformId === null || addedPlatformIds.has(selectedPlatformId)) {
+      setSelectedPlatformId(firstAvailablePlatform?.id ?? null)
+    }
+  }, [endeavors, platforms, selectedPlatformId])
 
   async function formAction(formData: FormData) {
     const platform_id = parseInt(formData.get('platform_id') as string)
     const username = formData.get('username') as string
 
-    if (!user?.id) {
-      console.error('User ID is required')
+    if (!user?.id || Number.isNaN(platform_id) || addedPlatformIds.has(platform_id)) {
+      console.error('User ID and platform are required')
       return
     }
 
@@ -42,23 +57,54 @@ function IndexPage() {
 
   return (
     <div className='grid gap-6 py-6'>
-      <div className='mx-auto w-full max-w-3xl px-4 sm:px-6'>
+      <div className='mx-auto w-full max-w-6xl'>
         <form
           action={formAction}
           className='flex flex-col gap-2 border border-gray-800 bg-gray-950/60 p-2 shadow-[0_0_0_1px_rgba(255,255,255,0.02)] sm:flex-row sm:items-center'
         >
-          <select
-            defaultValue='Platform'
-            className='h-11 w-full border border-gray-800 bg-black px-3 text-sm font-medium text-white transition-colors focus:border-gray-500 focus:outline-none sm:w-44'
-            name='platform_id'
+          <input type='hidden' name='platform_id' value={selectedPlatformId ?? ''} />
+
+          <div
+            className='relative flex h-auto w-full gap-1 overflow-hidden rounded-lg border border-gray-800 bg-black p-1 sm:h-11 sm:flex-[1.35]'
+            aria-label='Platform'
+            role='radiogroup'
           >
-            <option disabled={true}>Platform</option>
-            {platforms?.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.title}
-              </option>
-            ))}
-          </select>
+            {selectedPlatformId !== null && (
+              <div
+                className='absolute top-1 left-1 h-[calc(100%-0.5rem)] rounded-md border border-gray-600 bg-gray-800 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] transition-[left] duration-300 ease-out'
+                style={{
+                  left: `calc(0.25rem + ${selectedPlatformIndex} * ((100% - 0.5rem) / 3))`,
+                  width: 'calc((100% - 0.5rem) / 3)',
+                }}
+              />
+            )}
+
+            {platforms?.map((p) => {
+              const isSelected = selectedPlatformId === p.id
+              const isDisabled = addedPlatformIds.has(p.id)
+
+              return (
+                <button
+                  aria-checked={isSelected}
+                  disabled={isDisabled}
+                  className={[
+                    'relative z-10 min-h-9 flex-1 rounded-md border border-transparent px-2 text-xs font-semibold transition-colors focus:outline-none sm:min-w-28 sm:px-3 sm:text-sm',
+                    isSelected
+                      ? 'text-white'
+                      : isDisabled
+                        ? 'cursor-not-allowed text-gray-700'
+                        : 'text-gray-500 hover:text-gray-200',
+                  ].join(' ')}
+                  key={p.id}
+                  onClick={() => setSelectedPlatformId(p.id)}
+                  role='radio'
+                  type='button'
+                >
+                  {p.title}
+                </button>
+              )
+            })}
+          </div>
 
           <input
             name='username'
@@ -69,7 +115,8 @@ function IndexPage() {
 
           <button
             type='submit'
-            className='h-11 w-full border border-emerald-800 bg-emerald-950 px-5 text-sm font-semibold text-emerald-100 transition-colors hover:border-emerald-600 hover:bg-emerald-900 focus:border-emerald-500 focus:outline-none sm:w-auto'
+            disabled={selectedPlatformId === null}
+            className='h-11 w-full border border-emerald-800 bg-emerald-950 px-5 text-sm font-semibold text-emerald-100 transition-colors hover:border-emerald-600 hover:bg-emerald-900 focus:border-emerald-500 focus:outline-none disabled:cursor-not-allowed disabled:border-gray-800 disabled:bg-gray-950 disabled:text-gray-600 sm:w-auto'
           >
             + Add
           </button>
