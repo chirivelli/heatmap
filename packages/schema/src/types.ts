@@ -1,11 +1,7 @@
-// Shared types that can be used across frontend and backend
-// These will be automatically inferred from the Drizzle schema
+import type { InferInsertModel, InferSelectModel } from 'drizzle-orm'
 
-import type { InferSelectModel, InferInsertModel } from 'drizzle-orm'
+import * as schema from '.'
 
-import * as schema from './schema'
-
-// Export types for each table
 export type User = InferSelectModel<typeof schema.users>
 export type NewUser = InferInsertModel<typeof schema.users>
 

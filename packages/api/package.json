@@ -8,12 +8,11 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@neondatabase/serverless": "^1.0.2",
-    "@t3-oss/env-core": "^0.13.11",
+    "@heatmap/db": "workspace:*",
+    "@heatmap/env": "workspace:*",
+    "@heatmap/schema": "workspace:*",
     "drizzle-orm": "^0.44.7",
-    "hono": "^4.6.14",
-    "postgres": "^3.4.5",
-    "zod": "^4.4.3"
+    "hono": "^4.6.14"
   },
   "devDependencies": {
     "@types/bun": "latest",

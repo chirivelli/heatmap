@@ -13,12 +13,11 @@
       "name": "@heatmap/api",
       "version": "0.0.0",
       "dependencies": {
-        "@neondatabase/serverless": "^1.0.2",
-        "@t3-oss/env-core": "^0.13.11",
+        "@heatmap/db": "workspace:*",
+        "@heatmap/env": "workspace:*",
+        "@heatmap/schema": "workspace:*",
         "drizzle-orm": "^0.44.7",
         "hono": "^4.6.14",
-        "postgres": "^3.4.5",
-        "zod": "^4.4.3",
       },
       "devDependencies": {
         "@types/bun": "latest",
@@ -27,22 +26,60 @@
         "typescript": "^5.9.3",
       },
     },
+    "packages/db": {
+      "name": "@heatmap/db",
+      "version": "0.0.0",
+      "dependencies": {
+        "@heatmap/env": "workspace:*",
+        "@heatmap/schema": "workspace:*",
+        "@neondatabase/serverless": "^1.0.2",
+        "drizzle-orm": "^0.44.7",
+      },
+      "devDependencies": {
+        "@types/bun": "latest",
+        "@types/node": "^25.6.0",
+        "drizzle-kit": "^0.31.7",
+        "typescript": "^5.9.3",
+      },
+    },
+    "packages/env": {
+      "name": "@heatmap/env",
+      "version": "0.0.0",
+      "dependencies": {
+        "@t3-oss/env-core": "^0.13.11",
+        "zod": "^4.4.3",
+      },
+      "devDependencies": {
+        "@types/bun": "latest",
+        "@types/node": "^25.6.0",
+        "typescript": "^5.9.3",
+      },
+    },
+    "packages/schema": {
+      "name": "@heatmap/schema",
+      "version": "0.0.0",
+      "dependencies": {
+        "drizzle-orm": "^0.44.7",
+      },
+      "devDependencies": {
+        "typescript": "^5.9.3",
+      },
+    },
     "packages/web": {
       "name": "@heatmap/web",
       "version": "0.0.0",
       "dependencies": {
         "@clerk/clerk-react": "^5.56.0",
-        "@t3-oss/env-core": "^0.13.11",
+        "@heatmap/env": "workspace:*",
+        "@heatmap/schema": "workspace:*",
         "@tanstack/react-query": "^5.90.10",
         "@tanstack/react-router": "^1.169.1",
         "react": "^19.2.0",
         "react-dom": "^19.2.0",
-        "zod": "^4.4.3",
       },
       "devDependencies": {
         "@clerk/types": "^4.97.1",
         "@eslint/js": "^9.39.1",
-        "@neondatabase/serverless": "^1.0.2",
         "@tailwindcss/vite": "^4.1.17",
         "@tanstack/router-plugin": "^1.167.32",
         "@types/react": "^19.2.6",
@@ -186,6 +223,12 @@
     "@eslint/plugin-kit": ["@eslint/plugin-kit@0.4.1", "", { "dependencies": { "@eslint/core": "^0.17.0", "levn": "^0.4.1" } }, "sha512-43/qtrDUokr7LJqoF2c3+RInu/t4zfrpYdoSDfYyhg52rwLV6TnOvdG4fXm7IkSB3wErkcmJS9iEhjVtOSEjjA=="],
 
     "@heatmap/api": ["@heatmap/api@workspace:packages/api"],
+
+    "@heatmap/db": ["@heatmap/db@workspace:packages/db"],
+
+    "@heatmap/env": ["@heatmap/env@workspace:packages/env"],
+
+    "@heatmap/schema": ["@heatmap/schema@workspace:packages/schema"],
 
     "@heatmap/web": ["@heatmap/web@workspace:packages/web"],
 

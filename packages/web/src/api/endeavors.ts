@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
-import type { Endeavor, NewEndeavor } from '../../../api/src/db/types'
+import type { Endeavor, NewEndeavor } from '@heatmap/schema/types'
 
 import { API_URL } from './client'
 
