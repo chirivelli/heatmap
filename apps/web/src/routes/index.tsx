@@ -124,7 +124,7 @@ function IndexPage() {
       </div>
 
       {hasNoEndeavors && (
-        <section className='mx-auto flex w-full max-w-3xl flex-col items-center border border-gray-900 bg-gray-950/40 px-6 py-12 text-center shadow-[0_0_0_1px_rgba(255,255,255,0.02)] sm:px-10 sm:py-16'>
+        <section className='mx-auto flex w-full max-w-6xl flex-col items-center border border-gray-900 bg-gray-950/40 px-6 py-12 text-center shadow-[0_0_0_1px_rgba(255,255,255,0.02)] sm:px-10 sm:py-16'>
           <div className='mb-5 flex size-16 items-center justify-center border border-emerald-900/70 bg-black text-emerald-300'>
             <DotmSquare12 ariaLabel='No connections yet' size={42} dotSize={5} speed={1.1} bloom />
           </div>
