@@ -1,8 +1,10 @@
+import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
+import { pathToFileURL } from 'node:url'
 
-import platforms from './routes/platforms'
-import users from './routes/users'
+import platforms from './routes/platforms.js'
+import users from './routes/users.js'
 
 const app = new Hono()
 
@@ -22,5 +24,14 @@ app.get('/', (c) => {
 // Mount routes
 app.route('/api/users', users)
 app.route('/api/platforms', platforms)
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  const port = Number(process.env.PORT ?? 3000)
+
+  serve({
+    fetch: app.fetch,
+    port,
+  })
+}
 
 export default app

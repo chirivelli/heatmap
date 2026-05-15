@@ -1,2 +1,1 @@
-- use bun instead of node
 - never run the dev server

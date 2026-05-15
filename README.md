@@ -15,7 +15,7 @@ React application built with Vite, featuring:
 
 ### API Server (`packages/api`)
 
-Hono API server built with Bun:
+Hono API server built with Node.js:
 
 - TypeScript
 - CORS enabled

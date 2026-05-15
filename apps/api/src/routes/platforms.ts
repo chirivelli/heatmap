@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 
-import { db, schema } from '../db/client'
+import { db, schema } from '../db/client.js'
 
 const platforms = new Hono()
 

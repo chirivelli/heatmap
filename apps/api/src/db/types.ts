@@ -3,7 +3,7 @@
 
 import type { InferSelectModel, InferInsertModel } from 'drizzle-orm'
 
-import * as schema from './schema'
+import * as schema from './schema.js'
 
 // Export types for each table
 export type User = InferSelectModel<typeof schema.users>

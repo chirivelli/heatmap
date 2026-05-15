@@ -1,9 +1,9 @@
 import { and, eq } from 'drizzle-orm'
 import { Hono } from 'hono'
 
-import type { NewEndeavor, NewUser } from '../db/types'
+import type { NewEndeavor, NewUser } from '../db/types.js'
 
-import { db, schema } from '../db/client'
+import { db, schema } from '../db/client.js'
 
 const users = new Hono()
 
