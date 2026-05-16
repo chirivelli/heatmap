@@ -1,3 +1,3 @@
-import { createWebEnv } from '../env'
+import { createWebEnv } from '@heatmap/env/web'
 
 export const env = createWebEnv(import.meta.env)

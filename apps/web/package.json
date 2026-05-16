@@ -11,12 +11,11 @@
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.56.0",
-    "@t3-oss/env-core": "^0.13.11",
+    "@heatmap/env": "*",
     "@tanstack/react-query": "^5.90.10",
     "@tanstack/react-router": "^1.169.1",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "zod": "^4.4.3"
+    "react-dom": "^19.2.0"
   },
   "devDependencies": {
     "@clerk/types": "^4.97.1",

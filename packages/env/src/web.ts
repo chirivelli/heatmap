@@ -5,9 +5,9 @@ export function createWebEnv(runtimeEnv: Record<string, string | boolean | undef
   return createEnv({
     clientPrefix: 'VITE_',
     client: {
-      VITE_API_URL: z.string().url().default('http://localhost:3000'),
+      VITE_API_URL: z.url().default('http://localhost:3000'),
       VITE_CLERK_PUBLISHABLE_KEY: z.string().min(1),
-      VITE_GITHUB_TOKEN: z.string().optional(),
+      VITE_GITHUB_TOKEN: z.string(),
     },
     runtimeEnv,
     emptyStringAsUndefined: true,

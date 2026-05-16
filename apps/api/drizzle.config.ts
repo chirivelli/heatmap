@@ -1,6 +1,5 @@
+import { env } from '@heatmap/env/api'
 import { defineConfig } from 'drizzle-kit'
-
-import { env } from './src/env'
 
 export default defineConfig({
   schema: './src/db/schema.ts',

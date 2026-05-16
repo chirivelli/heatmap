@@ -1,1 +1,2 @@
 - never run the dev server
+- don't install anything, ask for me to do it
