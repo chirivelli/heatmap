@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query'
+import type { Platform } from '@heatmap/schema'
 
-import type { Platform } from '../../../api/src/db/types'
+import { useQuery } from '@tanstack/react-query'
 
 import { API_URL } from './client'
 

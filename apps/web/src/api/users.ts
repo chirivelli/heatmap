@@ -1,6 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import type { NewUser, User } from '@heatmap/schema'
 
-import type { User, NewUser } from '../../../api/src/db/types'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { API_URL } from './client'
 

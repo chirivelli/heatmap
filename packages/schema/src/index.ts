@@ -1,5 +1,6 @@
+import type { InferInsertModel, InferSelectModel } from 'drizzle-orm'
 import { relations } from 'drizzle-orm'
-import { pgTable, text, integer } from 'drizzle-orm/pg-core'
+import { integer, pgTable, text } from 'drizzle-orm/pg-core'
 
 export const users = pgTable('users', {
   id: text('id').primaryKey(),
@@ -22,7 +23,6 @@ export const endeavors = pgTable('endeavors', {
   username: text('username').notNull(),
 })
 
-// Relations
 export const usersRelations = relations(users, ({ many }) => ({
   endeavors: many(endeavors),
 }))
@@ -41,3 +41,12 @@ export const endeavorsRelations = relations(endeavors, ({ one }) => ({
     references: [platforms.id],
   }),
 }))
+
+export type User = InferSelectModel<typeof users>
+export type NewUser = InferInsertModel<typeof users>
+
+export type Platform = InferSelectModel<typeof platforms>
+export type NewPlatform = InferInsertModel<typeof platforms>
+
+export type Endeavor = InferSelectModel<typeof endeavors>
+export type NewEndeavor = InferInsertModel<typeof endeavors>

@@ -18,12 +18,5 @@ export {
 } from './endeavors'
 
 // Re-export types
-export type {
-  User,
-  NewUser,
-  Platform,
-  NewPlatform,
-  Endeavor,
-  NewEndeavor,
-} from '../../../api/src/db/types'
+export type { User, NewUser, Platform, NewPlatform, Endeavor, NewEndeavor } from '@heatmap/schema'
 export type { EndeavorWithPlatform } from './endeavors'

@@ -1,6 +1,6 @@
+import { db } from '@heatmap/db'
+import * as schema from '@heatmap/schema'
 import { Hono } from 'hono'
-
-import { db, schema } from '../db/client.js'
 
 const platforms = new Hono()
 

@@ -1,9 +1,9 @@
+import type { NewEndeavor, NewUser } from '@heatmap/schema'
+
+import { db } from '@heatmap/db'
+import * as schema from '@heatmap/schema'
 import { and, eq } from 'drizzle-orm'
 import { Hono } from 'hono'
-
-import type { NewEndeavor, NewUser } from '../db/types.js'
-
-import { db, schema } from '../db/client.js'
 
 const users = new Hono()
 

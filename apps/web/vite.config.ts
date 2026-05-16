@@ -1,10 +1,9 @@
+import { createWebEnv } from '@heatmap/env/web'
 import tailwindcss from '@tailwindcss/vite'
-import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
+import { tanstackRouter } from '@tanstack/router-plugin/vite'
 import react from '@vitejs/plugin-react'
 import path from 'node:path'
 import { defineConfig, loadEnv } from 'vite'
-
-import { createWebEnv } from '@heatmap/env/web'
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
@@ -14,7 +13,7 @@ export default defineConfig(({ mode }) => {
   })
 
   return {
-    plugins: [TanStackRouterVite(), react(), tailwindcss()],
+    plugins: [tanstackRouter(), react(), tailwindcss()],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
