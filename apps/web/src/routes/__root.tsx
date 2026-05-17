@@ -97,10 +97,10 @@ function RootLayout() {
       </SignedOut>
 
       <SignedIn>
-        <div className='flex min-h-screen flex-col bg-black font-mono text-white'>
+        <div className='flex min-h-screen min-w-0 flex-col overflow-x-hidden bg-black font-mono text-white'>
           <NavBar />
 
-          <div className='mx-auto w-full max-w-7xl grow px-4 sm:px-6 lg:px-8'>
+          <div className='mx-auto min-w-0 w-full max-w-7xl grow px-4 sm:px-6 lg:px-8'>
             <Outlet />
           </div>
         </div>

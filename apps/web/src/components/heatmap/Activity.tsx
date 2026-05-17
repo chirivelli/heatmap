@@ -77,16 +77,16 @@ export function Activity({ userId, username, platform, platform_id, refetch }: H
   const endDate = new Date(selectedYear, 11, 31) // Always show full year
 
   return (
-    <div className='mx-auto w-full max-w-6xl border border-gray-900 bg-black'>
-      <div className='flex flex-col gap-4 p-4 sm:p-6'>
-        <div className='flex flex-wrap items-center justify-between gap-2'>
-          <div className='inline-flex items-center gap-2 rounded-full border border-gray-700 bg-gray-900 px-3 py-1.5'>
-            <span className='text-sm font-medium text-white'>{platform}</span>
+    <div className='mx-auto min-w-0 w-full max-w-6xl overflow-hidden border border-gray-900 bg-black'>
+      <div className='flex min-w-0 flex-col gap-4 p-4 sm:p-6'>
+        <div className='flex min-w-0 flex-col items-start gap-3 md:flex-row md:items-center md:justify-between'>
+          <div className='inline-flex max-w-full items-center gap-2 rounded-full border border-gray-700 bg-gray-900 px-3 py-1.5'>
+            <span className='shrink-0 text-sm font-medium text-white'>{platform}</span>
             <span className='text-xs text-gray-500'>/</span>
-            <span className='text-sm font-medium text-gray-300'>{username}</span>
+            <span className='min-w-0 truncate text-sm font-medium text-gray-300'>{username}</span>
           </div>
 
-          <div className='flex items-center gap-2'>
+          <div className='flex max-w-full flex-wrap items-center gap-2'>
             <YearNavigation
               selectedYear={selectedYear}
               minYear={minYear}
