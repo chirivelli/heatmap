@@ -27,4 +27,6 @@ dist-ssr
 .env
 
 # Coding Agents
-.codex
+.codex/*
+!.codex/
+!.codex/hooks.json
