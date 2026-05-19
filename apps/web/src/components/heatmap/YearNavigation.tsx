@@ -15,7 +15,7 @@ export function YearNavigation({
   const canGoForward = selectedYear < maxYear
 
   return (
-    <div className='inline-flex items-center gap-2 rounded-full border border-gray-700 bg-gray-900 px-2 py-1'>
+    <div className='inline-flex items-center gap-2 rounded-full border border-gray-700 bg-gray-900 px-2 py-1 select-none'>
       <button
         onClick={() => onYearChange(selectedYear - 1)}
         disabled={!canGoBack}
@@ -50,4 +50,3 @@ export function YearNavigation({
     </div>
   )
 }
-

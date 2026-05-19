@@ -77,10 +77,10 @@ export function Activity({ userId, username, platform, platform_id, refetch }: H
   const endDate = new Date(selectedYear, 11, 31) // Always show full year
 
   return (
-    <div className='mx-auto min-w-0 w-full max-w-6xl overflow-hidden border border-gray-900 bg-black'>
+    <div className='mx-auto w-full max-w-6xl min-w-0 overflow-hidden border border-gray-900 bg-black'>
       <div className='flex min-w-0 flex-col gap-4 p-4 sm:p-6'>
         <div className='flex min-w-0 flex-col items-start gap-3 md:flex-row md:items-center md:justify-between'>
-          <div className='inline-flex max-w-full items-center gap-2 rounded-full border border-gray-700 bg-gray-900 px-3 py-1.5'>
+          <div className='inline-flex max-w-full items-center gap-2 rounded-full border border-gray-700 bg-gray-900 px-3 py-1.5 select-none'>
             <span className='shrink-0 text-sm font-medium text-white'>{platform}</span>
             <span className='text-xs text-gray-500'>/</span>
             <span className='min-w-0 truncate text-sm font-medium text-gray-300'>{username}</span>
@@ -95,7 +95,7 @@ export function Activity({ userId, username, platform, platform_id, refetch }: H
             />
 
             <button
-              className='inline-flex items-center gap-1 rounded-full border border-red-900 bg-red-950 px-3 py-1.5 text-sm font-medium text-red-400 transition-colors hover:bg-red-900 hover:text-red-300'
+              className='inline-flex items-center gap-1 rounded-full border border-red-900 bg-red-950 px-3 py-1.5 text-sm font-medium text-red-400 transition-colors select-none hover:bg-red-900 hover:text-red-300'
               onClick={async () => {
                 try {
                   await deleteEndeavor.mutateAsync({
@@ -116,13 +116,13 @@ export function Activity({ userId, username, platform, platform_id, refetch }: H
 
         {isFetching ? (
           <div className='flex min-h-37.5 items-center justify-center py-8'>
-            <div className='inline-flex items-center gap-3 px-4 py-2 font-semibold text-white'>
+            <div className='inline-flex items-center gap-3 px-4 py-2 font-semibold text-white select-none'>
               <DotmSquare5 ariaLabel='Fetching data' size={32} dotSize={4} speed={1.2} bloom />
               Fetching data ...
             </div>
           </div>
         ) : hasNoData ? (
-          <div className='border border-gray-900 bg-black p-8 text-center'>
+          <div className='border border-gray-900 bg-black p-8 text-center select-none'>
             <div className='text-gray-400'>
               <p className='text-lg'>No data found for "{username}"</p>
               <p className='mt-2 text-sm'>Try a different username or platform</p>
@@ -130,7 +130,7 @@ export function Activity({ userId, username, platform, platform_id, refetch }: H
           </div>
         ) : !isError && Array.isArray(filteredData) ? (
           <>
-            <div className='text-sm text-gray-300'>
+            <div className='text-sm text-gray-300 select-none'>
               Total contributions in {selectedYear}:{' '}
               <span className='font-semibold text-white'>
                 {filteredData.reduce((sum, point) => sum + point.count, 0)}
@@ -156,7 +156,7 @@ export function Activity({ userId, username, platform, platform_id, refetch }: H
         ) : null}
 
         {isError && error && (
-          <div className='border border-red-900 bg-red-950 p-4'>
+          <div className='border border-red-900 bg-red-950 p-4 select-none'>
             <div className='flex'>
               <div className='shrink-0'>
                 <svg className='h-5 w-5 text-red-500' viewBox='0 0 20 20' fill='currentColor'>

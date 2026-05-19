@@ -1,4 +1,5 @@
 import type { HeatmapProvider, ActivityDataPoint } from '@/providers/heatmap.types'
+
 import { env } from '@/env'
 
 export class GitHubHeatmapProvider implements HeatmapProvider {

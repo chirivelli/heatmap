@@ -143,11 +143,11 @@ export function Grid({
   }
 
   return (
-    <div className='flex flex-col items-start gap-4'>
+    <div className='flex flex-col items-start gap-4 select-none'>
       {hoveredCell
         ? createPortal(
             <div
-              className='pointer-events-none fixed z-50 flex min-w-24 -translate-x-1/2 -translate-y-full flex-col items-center border border-gray-700 bg-[#080808] px-4 py-2 text-center text-gray-400 shadow-lg'
+              className='pointer-events-none fixed z-50 flex min-w-24 -translate-x-1/2 -translate-y-full flex-col items-center border border-gray-700 bg-[#080808] px-4 py-2 text-center text-gray-400 shadow-lg select-none'
               style={{ left: hoveredCell.left, top: hoveredCell.top }}
             >
               <div className='text-sm font-semibold text-white'>{hoveredCell.count}</div>

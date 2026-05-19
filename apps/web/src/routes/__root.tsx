@@ -1,8 +1,8 @@
 import { SignedIn, SignedOut, SignInButton } from '@clerk/clerk-react'
 import { Outlet, createRootRoute } from '@tanstack/react-router'
 
-import { useSyncUser } from '@/hooks/useSyncUser'
 import { NavBar } from '@/components/NavBar'
+import { useSyncUser } from '@/hooks/useSyncUser'
 
 export const Route = createRootRoute({
   component: RootLayout,
@@ -48,19 +48,19 @@ function RootLayout() {
             </SignInButton>
           </header>
 
-          <main className='relative z-10 mx-auto flex min-h-[calc(100vh-84px)] w-full max-w-7xl items-center px-4 pb-12 pt-6 sm:px-6 lg:px-8 lg:pb-16'>
+          <main className='relative z-10 mx-auto flex min-h-[calc(100vh-84px)] w-full max-w-7xl items-center px-4 pt-6 pb-12 sm:px-6 lg:px-8 lg:pb-16'>
             <section className='max-w-2xl'>
-              <div className='mb-5 inline-flex border border-emerald-900/80 bg-emerald-950/40 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-200'>
+              <div className='mb-5 inline-flex border border-emerald-900/80 bg-emerald-950/40 px-3 py-1 text-xs font-semibold tracking-[0.18em] text-emerald-200 uppercase'>
                 Unified activity tracking
               </div>
 
-              <h1 className='max-w-3xl text-4xl font-black leading-[1.02] tracking-tight text-white sm:text-6xl lg:text-7xl'>
+              <h1 className='max-w-3xl text-4xl leading-[1.02] font-black tracking-tight text-white sm:text-6xl lg:text-7xl'>
                 One heatmap for every coding grind.
               </h1>
 
               <p className='mt-6 max-w-xl text-base leading-7 text-gray-300 sm:text-lg'>
-                Track GitHub, LeetCode, and Codeforces progress in one focused dashboard. Add a profile,
-                switch years, and keep your streaks visible without bouncing between tabs.
+                Track GitHub, LeetCode, and Codeforces progress in one focused dashboard. Add a
+                profile, switch years, and keep your streaks visible without bouncing between tabs.
               </p>
 
               <div className='mt-8 flex flex-col gap-3 sm:flex-row'>
@@ -100,7 +100,7 @@ function RootLayout() {
         <div className='flex min-h-screen min-w-0 flex-col overflow-x-hidden bg-black font-mono text-white'>
           <NavBar />
 
-          <div className='mx-auto min-w-0 w-full max-w-7xl grow px-4 sm:px-6 lg:px-8'>
+          <div className='mx-auto w-full max-w-7xl min-w-0 grow px-4 sm:px-6 lg:px-8'>
             <Outlet />
           </div>
         </div>

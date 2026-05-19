@@ -19,7 +19,7 @@
   },
 
   "sortTailwindcss": {
-    "stylesheet": "./packages/web/src/index.css",
+    "stylesheet": "./apps/web/src/index.css",
     "functions": ["clsx", "cn"]
   }
 }

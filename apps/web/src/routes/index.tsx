@@ -57,7 +57,7 @@ function IndexPage() {
 
   return (
     <div className='grid min-w-0 gap-6 py-6'>
-      <div className='mx-auto min-w-0 w-full max-w-6xl'>
+      <div className='mx-auto w-full max-w-6xl min-w-0'>
         <form
           action={formAction}
           className='flex min-w-0 flex-col gap-2 border border-gray-800 bg-gray-950/60 p-2 shadow-[0_0_0_1px_rgba(255,255,255,0.02)] md:flex-row md:flex-wrap md:items-center lg:flex-nowrap'
@@ -65,7 +65,7 @@ function IndexPage() {
           <input type='hidden' name='platform_id' value={selectedPlatformId ?? ''} />
 
           <div
-            className='relative flex h-auto min-w-0 w-full gap-1 overflow-hidden rounded-lg border border-gray-800 bg-black p-1 md:h-11 md:flex-[1_1_20rem]'
+            className='relative flex h-auto w-full min-w-0 gap-1 overflow-hidden rounded-lg border border-gray-800 bg-black p-1 select-none md:h-11 md:flex-[1_1_20rem]'
             aria-label='Platform'
             role='radiogroup'
           >
@@ -110,13 +110,13 @@ function IndexPage() {
             name='username'
             type='text'
             placeholder='username'
-            className='h-11 min-w-0 w-full border border-gray-800 bg-black px-3 text-sm text-white placeholder-gray-500 transition-colors focus:border-gray-500 focus:outline-none md:flex-[1_1_14rem]'
+            className='h-11 w-full min-w-0 border border-gray-800 bg-black px-3 text-sm text-white placeholder-gray-500 transition-colors focus:border-gray-500 focus:outline-none md:flex-[1_1_14rem]'
           />
 
           <button
             type='submit'
             disabled={selectedPlatformId === null}
-            className='h-11 w-full shrink-0 border border-emerald-800 bg-emerald-950 px-5 text-sm font-semibold text-emerald-100 transition-colors hover:border-emerald-600 hover:bg-emerald-900 focus:border-emerald-500 focus:outline-none disabled:cursor-not-allowed disabled:border-gray-800 disabled:bg-gray-950 disabled:text-gray-600 md:w-auto'
+            className='h-11 w-full shrink-0 border border-emerald-800 bg-emerald-950 px-5 text-sm font-semibold text-emerald-100 transition-colors select-none hover:border-emerald-600 hover:bg-emerald-900 focus:border-emerald-500 focus:outline-none disabled:cursor-not-allowed disabled:border-gray-800 disabled:bg-gray-950 disabled:text-gray-600 md:w-auto'
           >
             + Add
           </button>
@@ -124,7 +124,7 @@ function IndexPage() {
       </div>
 
       {hasNoEndeavors && (
-        <section className='mx-auto flex w-full max-w-6xl flex-col items-center border border-gray-900 bg-gray-950/40 px-6 py-12 text-center shadow-[0_0_0_1px_rgba(255,255,255,0.02)] sm:px-10 sm:py-16'>
+        <section className='mx-auto flex w-full max-w-6xl flex-col items-center border border-gray-900 bg-gray-950/40 px-6 py-12 text-center shadow-[0_0_0_1px_rgba(255,255,255,0.02)] select-none sm:px-10 sm:py-16'>
           <div className='mb-5 flex size-16 items-center justify-center border border-emerald-900/70 bg-black text-emerald-300'>
             <DotmSquare12 ariaLabel='No connections yet' size={42} dotSize={5} speed={1.1} bloom />
           </div>
