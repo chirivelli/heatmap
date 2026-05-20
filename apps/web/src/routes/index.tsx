@@ -20,10 +20,12 @@ function IndexPage() {
   const hasNoEndeavors = Array.isArray(endeavors) && endeavors.length === 0
   const addedPlatformIds = new Set(endeavors?.map((endeavor) => endeavor.platformId))
   const [selectedPlatformId, setSelectedPlatformId] = useState<number | null>(null)
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const selectedPlatformIndex = Math.max(
     0,
     platforms?.findIndex((platform) => platform.id === selectedPlatformId) ?? 0,
   )
+  const platformCount = platforms?.length ?? 3
 
   useEffect(() => {
     const firstAvailablePlatform = platforms?.find((platform) => !addedPlatformIds.has(platform.id))
@@ -33,12 +35,22 @@ function IndexPage() {
     }
   }, [endeavors, platforms, selectedPlatformId])
 
+  useEffect(() => {
+    setErrorMsg(null)
+  }, [selectedPlatformId])
+
   async function formAction(formData: FormData) {
+    setErrorMsg(null)
     const platform_id = parseInt(formData.get('platform_id') as string)
-    const username = formData.get('username') as string
+    const username = (formData.get('username') as string || '').trim()
+
+    if (!username) {
+      setErrorMsg('Please enter a username.')
+      return
+    }
 
     if (!user?.id || Number.isNaN(platform_id) || addedPlatformIds.has(platform_id)) {
-      console.error('User ID and platform are required')
+      setErrorMsg('Platform selection and user authentication are required.')
       return
     }
 
@@ -50,7 +62,8 @@ function IndexPage() {
       })
       refetch()
       console.log(res)
-    } catch (error) {
+    } catch (error: any) {
+      setErrorMsg(error?.message || 'Failed to connect profile. Please verify your username.')
       console.error('Failed to create endeavor:', error)
     }
   }
@@ -73,15 +86,16 @@ function IndexPage() {
               <div
                 className='absolute top-1 left-1 h-[calc(100%-0.5rem)] rounded-md border border-gray-600 bg-gray-800 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] transition-[left] duration-300 ease-out'
                 style={{
-                  left: `calc(0.25rem + ${selectedPlatformIndex} * ((100% - 0.5rem) / 3))`,
-                  width: 'calc((100% - 0.5rem) / 3)',
+                  left: `calc(0.25rem + ${selectedPlatformIndex} * ((100% - 0.5rem) / ${platformCount}))`,
+                  width: `calc((100% - 0.5rem) / ${platformCount})`,
                 }}
               />
             )}
 
             {platforms?.map((p) => {
               const isSelected = selectedPlatformId === p.id
-              const isDisabled = addedPlatformIds.has(p.id)
+              const isAlreadyAdded = addedPlatformIds.has(p.id)
+              const isDisabled = isAlreadyAdded || createEndeavor.isPending
 
               return (
                 <button
@@ -101,6 +115,9 @@ function IndexPage() {
                   type='button'
                 >
                   {p.title}
+                  {isAlreadyAdded && (
+                    <span className='ml-1 text-[10px] text-emerald-500 font-bold'>✓</span>
+                  )}
                 </button>
               )
             })}
@@ -110,17 +127,33 @@ function IndexPage() {
             name='username'
             type='text'
             placeholder='username'
-            className='h-11 w-full min-w-0 border border-gray-800 bg-black px-3 text-sm text-white placeholder-gray-500 transition-colors focus:border-gray-500 focus:outline-none md:flex-[1_1_14rem]'
+            disabled={createEndeavor.isPending}
+            className='h-11 w-full min-w-0 border border-gray-800 bg-black px-3 text-sm text-white placeholder-gray-500 transition-colors focus:border-gray-500 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-950/40 disabled:text-gray-500 md:flex-[1_1_14rem]'
           />
 
           <button
             type='submit'
-            disabled={selectedPlatformId === null}
+            disabled={selectedPlatformId === null || createEndeavor.isPending}
             className='h-11 w-full shrink-0 border border-emerald-800 bg-emerald-950 px-5 text-sm font-semibold text-emerald-100 transition-colors select-none hover:border-emerald-600 hover:bg-emerald-900 focus:border-emerald-500 focus:outline-none disabled:cursor-not-allowed disabled:border-gray-800 disabled:bg-gray-950 disabled:text-gray-600 md:w-auto'
           >
-            + Add
+            {createEndeavor.isPending ? (
+              <span className='flex items-center justify-center gap-2'>
+                <svg className='animate-spin h-4 w-4 text-emerald-100' fill='none' viewBox='0 0 24 24'>
+                  <circle className='opacity-25' cx='12' cy='12' r='10' stroke='currentColor' strokeWidth='4' />
+                  <path className='opacity-75' fill='currentColor' d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z' />
+                </svg>
+                Adding...
+              </span>
+            ) : (
+              '+ Add'
+            )}
           </button>
         </form>
+        {errorMsg && (
+          <div className='mt-2 text-xs font-semibold text-red-500 select-none animate-fade-in'>
+            {errorMsg}
+          </div>
+        )}
       </div>
 
       {hasNoEndeavors && (

@@ -25,6 +25,11 @@ export function Activity({ userId, username, platform, platform_id, refetch }: H
   const [selectedYear, setSelectedYear] = useState<number>(currentYear)
   const [minYear, setMinYear] = useState<number>(currentYear)
   const [maxYear, setMaxYear] = useState<number>(currentYear)
+  const [clickedCell, setClickedCell] = useState<{ date: string; count: number } | null>(null)
+
+  useEffect(() => {
+    setClickedCell(null)
+  }, [selectedYear, username, platform])
 
   const { data, isFetching, isError, error, isSuccess } = useQuery<ActivityDataPoint[]>({
     queryKey: ['heatmap', platform, username.trim(), selectedYear],
@@ -71,6 +76,8 @@ export function Activity({ userId, username, platform, platform_id, refetch }: H
     Array.isArray(allYearsData) &&
     allYearsData.length === 0 &&
     username
+
+  const stats = calculateStats(filteredData, selectedYear)
 
   // Get date range for selected year
   const startDate = new Date(selectedYear, 0, 1)
@@ -130,11 +137,27 @@ export function Activity({ userId, username, platform, platform_id, refetch }: H
           </div>
         ) : !isError && Array.isArray(filteredData) ? (
           <>
-            <div className='text-sm text-gray-300 select-none'>
-              Total contributions in {selectedYear}:{' '}
-              <span className='font-semibold text-white'>
-                {filteredData.reduce((sum, point) => sum + point.count, 0)}
-              </span>
+            <div className='grid grid-cols-2 gap-3 sm:grid-cols-4 select-none mb-4'>
+              <div className='rounded-xl border border-gray-950 bg-gray-950/40 p-4 backdrop-blur-md transition-colors hover:border-gray-800/80'>
+                <div className='text-[10px] font-bold text-gray-500 uppercase tracking-wider'>Total contributions</div>
+                <div className='text-2xl font-black mt-1 text-white'>{stats.total}</div>
+              </div>
+              <div className='rounded-xl border border-gray-950 bg-gray-950/40 p-4 backdrop-blur-md transition-colors hover:border-gray-800/80'>
+                <div className='text-[10px] font-bold text-gray-500 uppercase tracking-wider'>Current Streak</div>
+                <div className='text-2xl font-black mt-1 text-emerald-400'>
+                  {stats.currentStreak} {stats.currentStreak === 1 ? 'day' : 'days'}
+                </div>
+              </div>
+              <div className='rounded-xl border border-gray-950 bg-gray-950/40 p-4 backdrop-blur-md transition-colors hover:border-gray-800/80'>
+                <div className='text-[10px] font-bold text-gray-500 uppercase tracking-wider'>Longest Streak</div>
+                <div className='text-2xl font-black mt-1 text-amber-500'>
+                  {stats.maxStreak} {stats.maxStreak === 1 ? 'day' : 'days'}
+                </div>
+              </div>
+              <div className='rounded-xl border border-gray-950 bg-gray-950/40 p-4 backdrop-blur-md transition-colors hover:border-gray-800/80'>
+                <div className='text-[10px] font-bold text-gray-500 uppercase tracking-wider'>Consistency</div>
+                <div className='text-2xl font-black mt-1 text-blue-400'>{stats.consistency.toFixed(1)}%</div>
+              </div>
             </div>
 
             <div className='overflow-x-auto overflow-y-visible'>
@@ -146,12 +169,42 @@ export function Activity({ userId, username, platform, platform_id, refetch }: H
                     endDate,
                   }}
                   onCellClick={(date: string, count: number) => {
-                    console.log(`Clicked on ${date}: ${count} contributions`)
-                    // You can add more detailed tooltips or modals here
+                    setClickedCell({ date, count })
                   }}
                 />
               </div>
             </div>
+
+            {clickedCell && (
+              <div className='mt-4 flex items-center justify-between border border-gray-900 bg-gray-950/20 px-4 py-3 rounded-lg text-sm select-none'>
+                <div className='flex items-center gap-2 flex-wrap'>
+                  <span className='text-gray-500'>Selected Date:</span>
+                  <span className='font-semibold text-white'>
+                    {new Date(clickedCell.date).toLocaleDateString('en-US', {
+                      weekday: 'short',
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric',
+                    })}
+                  </span>
+                  <span className='text-gray-700 hidden sm:inline'>•</span>
+                  <span className='text-gray-500'>Activity:</span>
+                  <span
+                    className={`font-semibold ${
+                      clickedCell.count > 0 ? 'text-emerald-400' : 'text-gray-400'
+                    }`}
+                  >
+                    {clickedCell.count} {clickedCell.count === 1 ? 'contribution' : 'contributions'}
+                  </span>
+                </div>
+                <button
+                  onClick={() => setClickedCell(null)}
+                  className='text-xs text-gray-500 transition-colors hover:text-gray-300 focus:outline-none'
+                >
+                  Clear
+                </button>
+              </div>
+            )}
           </>
         ) : null}
 
@@ -178,3 +231,83 @@ export function Activity({ userId, username, platform, platform_id, refetch }: H
     </div>
   )
 }
+
+function calculateStats(data: ActivityDataPoint[], year: number) {
+  let total = 0
+  let maxSingleDay = 0
+  let activeDays = 0
+
+  const getLocalDateString = (d: Date) => {
+    const y = d.getFullYear()
+    const m = String(d.getMonth() + 1).padStart(2, '0')
+    const r = String(d.getDate()).padStart(2, '0')
+    return `${y}-${m}-${r}`
+  }
+
+  const dateMap = new Map<string, number>()
+  data.forEach((p) => {
+    const dStr = p.date.split('T')[0]
+    dateMap.set(dStr, p.count)
+    total += p.count
+    if (p.count > maxSingleDay) {
+      maxSingleDay = p.count
+    }
+    if (p.count > 0) activeDays++
+  })
+
+  let maxStreak = 0
+  let tempStreak = 0
+
+  const start = new Date(year, 0, 1)
+  const end = year === new Date().getFullYear() ? new Date() : new Date(year, 11, 31)
+
+  // Loop through dates
+  const curr = new Date(start)
+  while (curr <= end) {
+    const dStr = getLocalDateString(curr)
+    const count = dateMap.get(dStr) || 0
+    if (count > 0) {
+      tempStreak++
+      if (tempStreak > maxStreak) {
+        maxStreak = tempStreak
+      }
+    } else {
+      tempStreak = 0
+    }
+    curr.setDate(curr.getDate() + 1)
+  }
+
+  let currentStreak = 0
+  if (year === new Date().getFullYear()) {
+    const checkDate = new Date()
+    const todayStr = getLocalDateString(checkDate)
+    const todayCount = dateMap.get(todayStr) || 0
+
+    if (todayCount === 0) {
+      checkDate.setDate(checkDate.getDate() - 1)
+    }
+
+    while (checkDate >= start) {
+      const dStr = getLocalDateString(checkDate)
+      const count = dateMap.get(dStr) || 0
+      if (count > 0) {
+        currentStreak++
+        checkDate.setDate(checkDate.getDate() - 1)
+      } else {
+        break
+      }
+    }
+  }
+
+  const totalDays = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1
+  const consistency = totalDays > 0 ? (activeDays / totalDays) * 100 : 0
+
+  return {
+    total,
+    maxStreak,
+    currentStreak,
+    consistency,
+    maxSingleDay,
+  }
+}
+
