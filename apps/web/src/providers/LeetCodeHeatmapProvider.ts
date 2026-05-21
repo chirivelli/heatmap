@@ -1,27 +1,22 @@
 import type { HeatmapProvider, ActivityDataPoint } from '@/providers/heatmap.types'
 
-interface LeetCodeStatsResponse {
-  status: string
-  message: string
-  totalSolved: number
-  easySolved: number
-  mediumSolved: number
-  hardSolved: number
-  acceptanceRate: number
-  ranking: number
-  contributionPoints: number
-  reputation: number
-  submissionCalendar: Record<string, number>
+interface AlfaLeetCodeCalendarResponse {
+  activeYears?: number[]
+  submissionCalendar?: Record<string, number> | string
+  matchedUser?: {
+    userCalendar?: {
+      activeYears?: number[]
+      submissionCalendar?: Record<string, number> | string
+    }
+  }
 }
 
 export class LeetCodeHeatmapProvider implements HeatmapProvider {
   name = 'LeetCode'
 
-  async fetchData(username: string, year?: number): Promise<ActivityDataPoint[]> {
+  async fetchAvailableYears(username: string): Promise<number[]> {
     try {
-      // Fetch data from LeetCode Stats API
-      // This API returns ALL historical submissions
-      const response = await fetch(`https://leetcode-stats.tashif.codes/${username}`)
+      const response = await fetch(`https://alfa-leetcode-api.onrender.com/${username}/calendar`)
 
       if (!response.ok) {
         if (response.status === 404) {
@@ -30,21 +25,51 @@ export class LeetCodeHeatmapProvider implements HeatmapProvider {
         throw new Error(`LeetCode API error: ${response.status}`)
       }
 
-      const data: LeetCodeStatsResponse = await response.json()
+      const data: AlfaLeetCodeCalendarResponse = await response.json()
+      const activeYears = data.activeYears ?? data.matchedUser?.userCalendar?.activeYears
 
-      if (data.status !== 'success') {
-        throw new Error(`LeetCode API error: ${data.message}`)
+      if (!Array.isArray(activeYears)) {
+        return []
       }
 
-      // Convert submission calendar to ActivityDataPoint format
+      return activeYears.filter((year) => Number.isInteger(year)).sort((a, b) => a - b)
+    } catch (error) {
+      console.warn('LeetCode year discovery failed:', error)
+      throw error
+    }
+  }
+
+  async fetchData(username: string, year?: number): Promise<ActivityDataPoint[]> {
+    try {
+      const url = new URL(`https://alfa-leetcode-api.onrender.com/${username}/calendar`)
+      if (year) {
+        url.searchParams.set('year', String(year))
+      }
+
+      const response = await fetch(url)
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new Error(`User '${username}' not found on LeetCode`)
+        }
+        throw new Error(`LeetCode API error: ${response.status}`)
+      }
+
+      const data: AlfaLeetCodeCalendarResponse = await response.json()
+      const submissionCalendar = parseSubmissionCalendar(
+        data.submissionCalendar ?? data.matchedUser?.userCalendar?.submissionCalendar,
+      )
+
+      if (!submissionCalendar) {
+        throw new Error('LeetCode API response did not include a submission calendar')
+      }
+
       const activityData: ActivityDataPoint[] = []
 
-      for (const [timestamp, count] of Object.entries(data.submissionCalendar)) {
-        // Convert Unix timestamp to ISO date string
+      for (const [timestamp, count] of Object.entries(submissionCalendar)) {
         const date = new Date(parseInt(timestamp) * 1000)
         const isoDate = date.toISOString().split('T')[0]
 
-        // Filter by year if specified
         if (year) {
           const dataYear = date.getFullYear()
           if (dataYear !== year) {
@@ -73,4 +98,18 @@ export class LeetCodeHeatmapProvider implements HeatmapProvider {
       )
     }
   }
+}
+
+function parseSubmissionCalendar(
+  submissionCalendar: Record<string, number> | string | undefined,
+): Record<string, number> | undefined {
+  if (!submissionCalendar) {
+    return undefined
+  }
+
+  if (typeof submissionCalendar === 'string') {
+    return JSON.parse(submissionCalendar) as Record<string, number>
+  }
+
+  return submissionCalendar
 }

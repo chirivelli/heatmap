@@ -37,30 +37,35 @@ export function Activity({ userId, username, platform, platform_id, refetch }: H
     staleTime: 1000 * 60 * 5,
   })
 
-  // Detect available years from initial fetch (fetch all years to discover range)
-  const { data: allYearsData } = useQuery<ActivityDataPoint[]>({
+  const { data: availableYears } = useQuery<number[]>({
     queryKey: ['heatmap-years', platform, username.trim()],
-    queryFn: async () => provider.fetchData(username.trim()),
+    queryFn: async () => {
+      if (provider.fetchAvailableYears) {
+        try {
+          const years = await provider.fetchAvailableYears(username.trim())
+          if (years.length > 0) {
+            return years
+          }
+        } catch (error) {
+          console.warn('Provider year discovery failed, falling back to data inference:', error)
+        }
+      }
+
+      const allYearsData = await provider.fetchData(username.trim())
+      const years = allYearsData.map((point) => new Date(point.date).getFullYear())
+      return Array.from(new Set(years)).sort((a, b) => a - b)
+    },
     staleTime: 1000 * 60 * 60, // Cache for 1 hour
   })
 
   useEffect(() => {
-    if (allYearsData && allYearsData.length > 0) {
-      const years = new Set<number>()
-      allYearsData.forEach((point) => {
-        const year = new Date(point.date).getFullYear()
-        years.add(year)
-      })
-
-      const yearArray = Array.from(years).sort((a, b) => a - b)
-      if (yearArray.length > 0) {
-        const min = yearArray[0]
-        const max = yearArray[yearArray.length - 1]
-        setMinYear(min)
-        setMaxYear(Math.max(max, currentYear)) // Ensure current year is always selectable
-      }
+    if (availableYears && availableYears.length > 0) {
+      const min = availableYears[0]
+      const max = availableYears[availableYears.length - 1]
+      setMinYear(min)
+      setMaxYear(Math.max(max, currentYear)) // Ensure current year is always selectable
     }
-  }, [allYearsData, currentYear])
+  }, [availableYears, currentYear])
 
   // Handle year change
   const handleYearChange = (year: number) => {
@@ -70,12 +75,7 @@ export function Activity({ userId, username, platform, platform_id, refetch }: H
   // Use data as-is since provider already filters by year
   const filteredData = data || []
   const hasNoData =
-    !isError &&
-    isSuccess &&
-    allYearsData &&
-    Array.isArray(allYearsData) &&
-    allYearsData.length === 0 &&
-    username
+    !isError && isSuccess && availableYears && availableYears.length === 0 && username
 
   const stats = calculateStats(filteredData, selectedYear)
 
@@ -137,26 +137,36 @@ export function Activity({ userId, username, platform, platform_id, refetch }: H
           </div>
         ) : !isError && Array.isArray(filteredData) ? (
           <>
-            <div className='grid grid-cols-2 gap-3 sm:grid-cols-4 select-none mb-4'>
+            <div className='mb-4 grid grid-cols-2 gap-3 select-none sm:grid-cols-4'>
               <div className='rounded-xl border border-gray-950 bg-gray-950/40 p-4 backdrop-blur-md transition-colors hover:border-gray-800/80'>
-                <div className='text-[10px] font-bold text-gray-500 uppercase tracking-wider'>Total contributions</div>
-                <div className='text-2xl font-black mt-1 text-white'>{stats.total}</div>
+                <div className='text-[10px] font-bold tracking-wider text-gray-500 uppercase'>
+                  Total contributions
+                </div>
+                <div className='mt-1 text-2xl font-black text-white'>{stats.total}</div>
               </div>
               <div className='rounded-xl border border-gray-950 bg-gray-950/40 p-4 backdrop-blur-md transition-colors hover:border-gray-800/80'>
-                <div className='text-[10px] font-bold text-gray-500 uppercase tracking-wider'>Current Streak</div>
-                <div className='text-2xl font-black mt-1 text-emerald-400'>
+                <div className='text-[10px] font-bold tracking-wider text-gray-500 uppercase'>
+                  Current Streak
+                </div>
+                <div className='mt-1 text-2xl font-black text-emerald-400'>
                   {stats.currentStreak} {stats.currentStreak === 1 ? 'day' : 'days'}
                 </div>
               </div>
               <div className='rounded-xl border border-gray-950 bg-gray-950/40 p-4 backdrop-blur-md transition-colors hover:border-gray-800/80'>
-                <div className='text-[10px] font-bold text-gray-500 uppercase tracking-wider'>Longest Streak</div>
-                <div className='text-2xl font-black mt-1 text-amber-500'>
+                <div className='text-[10px] font-bold tracking-wider text-gray-500 uppercase'>
+                  Longest Streak
+                </div>
+                <div className='mt-1 text-2xl font-black text-amber-500'>
                   {stats.maxStreak} {stats.maxStreak === 1 ? 'day' : 'days'}
                 </div>
               </div>
               <div className='rounded-xl border border-gray-950 bg-gray-950/40 p-4 backdrop-blur-md transition-colors hover:border-gray-800/80'>
-                <div className='text-[10px] font-bold text-gray-500 uppercase tracking-wider'>Consistency</div>
-                <div className='text-2xl font-black mt-1 text-blue-400'>{stats.consistency.toFixed(1)}%</div>
+                <div className='text-[10px] font-bold tracking-wider text-gray-500 uppercase'>
+                  Consistency
+                </div>
+                <div className='mt-1 text-2xl font-black text-blue-400'>
+                  {stats.consistency.toFixed(1)}%
+                </div>
               </div>
             </div>
 
@@ -176,8 +186,8 @@ export function Activity({ userId, username, platform, platform_id, refetch }: H
             </div>
 
             {clickedCell && (
-              <div className='mt-4 flex items-center justify-between border border-gray-900 bg-gray-950/20 px-4 py-3 rounded-lg text-sm select-none'>
-                <div className='flex items-center gap-2 flex-wrap'>
+              <div className='mt-4 flex items-center justify-between rounded-lg border border-gray-900 bg-gray-950/20 px-4 py-3 text-sm select-none'>
+                <div className='flex flex-wrap items-center gap-2'>
                   <span className='text-gray-500'>Selected Date:</span>
                   <span className='font-semibold text-white'>
                     {new Date(clickedCell.date).toLocaleDateString('en-US', {
@@ -187,7 +197,7 @@ export function Activity({ userId, username, platform, platform_id, refetch }: H
                       year: 'numeric',
                     })}
                   </span>
-                  <span className='text-gray-700 hidden sm:inline'>•</span>
+                  <span className='hidden text-gray-700 sm:inline'>•</span>
                   <span className='text-gray-500'>Activity:</span>
                   <span
                     className={`font-semibold ${
@@ -310,4 +320,3 @@ function calculateStats(data: ActivityDataPoint[], year: number) {
     maxSingleDay,
   }
 }
-

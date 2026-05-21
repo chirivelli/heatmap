@@ -5,6 +5,69 @@ import { env } from '@/env'
 export class GitHubHeatmapProvider implements HeatmapProvider {
   name = 'GitHub'
 
+  async fetchAvailableYears(username: string): Promise<number[]> {
+    const token = env.VITE_GITHUB_TOKEN
+
+    if (!token || token === 'your_github_token_here') {
+      console.warn('No GitHub token provided, skipping GraphQL year discovery')
+      return []
+    }
+
+    const query = `
+      query($username: String!) {
+        user(login: $username) {
+          contributionsCollection {
+            contributionYears
+          }
+        }
+      }
+    `
+
+    try {
+      const response = await fetch('https://api.github.com/graphql', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `bearer ${token}`,
+        },
+        body: JSON.stringify({
+          query,
+          variables: { username },
+        }),
+      })
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error('Invalid GitHub token. Please check your VITE_GITHUB_TOKEN.')
+        }
+        if (response.status === 403) {
+          throw new Error('GitHub API rate limit exceeded or token lacks permissions.')
+        }
+        throw new Error(`GitHub API error: ${response.status}`)
+      }
+
+      const result = await response.json()
+
+      if (result.errors) {
+        const errorMessage = result.errors[0].message
+        if (errorMessage.includes('Could not resolve to a User')) {
+          throw new Error(`User '${username}' not found on GitHub`)
+        }
+        throw new Error(`GraphQL error: ${errorMessage}`)
+      }
+
+      const years = result.data?.user?.contributionsCollection?.contributionYears
+      if (!Array.isArray(years)) {
+        return []
+      }
+
+      return years.filter((year): year is number => Number.isInteger(year)).sort((a, b) => a - b)
+    } catch (error) {
+      console.warn('GitHub year discovery failed:', error)
+      throw error
+    }
+  }
+
   async fetchData(username: string, year?: number): Promise<ActivityDataPoint[]> {
     try {
       // First try to get real data from GitHub's GraphQL API
