@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { LoaderCircle, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 import type { ActivityDataPoint } from '@/providers/heatmap.types'
@@ -102,7 +103,8 @@ export function Activity({ userId, username, platform, platform_id, refetch }: H
             />
 
             <button
-              className='inline-flex items-center gap-1 rounded-full border border-red-900 bg-red-950 px-3 py-1.5 text-sm font-medium text-red-400 transition-colors select-none hover:bg-red-900 hover:text-red-300'
+              className='inline-flex h-9 w-25 items-center justify-center gap-1.5 rounded-full border border-red-900 bg-red-950 px-3 text-sm font-medium text-red-400 transition-colors select-none hover:bg-red-900 hover:text-red-300 disabled:cursor-not-allowed disabled:border-gray-800 disabled:bg-gray-950 disabled:text-gray-600'
+              disabled={deleteEndeavor.isPending}
               onClick={async () => {
                 try {
                   await deleteEndeavor.mutateAsync({
@@ -116,7 +118,12 @@ export function Activity({ userId, username, platform, platform_id, refetch }: H
               }}
               aria-label='Delete this endeavor'
             >
-              Delete
+              {deleteEndeavor.isPending ? (
+                <LoaderCircle aria-hidden='true' className='h-4 w-4 animate-spin' />
+              ) : (
+                <Trash2 aria-hidden='true' className='h-4 w-4' />
+              )}
+              <span>Delete</span>
             </button>
           </div>
         </div>

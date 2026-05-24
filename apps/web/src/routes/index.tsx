@@ -1,5 +1,6 @@
 import { useUser } from '@clerk/clerk-react'
 import { createFileRoute } from '@tanstack/react-router'
+import { Check, LoaderCircle, Plus } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 import { useCreateEndeavor, useUserEndeavorsWithPlatforms } from '@/api/endeavors'
@@ -102,7 +103,7 @@ function IndexPage() {
                   aria-checked={isSelected}
                   disabled={isDisabled}
                   className={[
-                    'relative z-10 min-h-9 min-w-0 flex-1 truncate rounded-md border border-transparent px-2 text-xs font-semibold transition-colors focus:outline-none sm:px-3 sm:text-sm',
+                    'relative z-10 inline-flex min-h-9 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-md border border-transparent px-2 text-xs font-semibold transition-colors focus:outline-none sm:px-3 sm:text-sm',
                     isSelected
                       ? 'text-white'
                       : isDisabled
@@ -114,10 +115,12 @@ function IndexPage() {
                   role='radio'
                   type='button'
                 >
-                  {p.title}
                   {isAlreadyAdded && (
-                    <span className='ml-1 text-[10px] font-bold text-emerald-500'>✓</span>
+                    <span className='inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-emerald-400 text-black shadow-[0_0_0_1px_rgba(16,185,129,0.45),0_0_12px_rgba(52,211,153,0.4)]'>
+                      <Check aria-hidden='true' className='h-3 w-3 stroke-[4]' />
+                    </span>
                   )}
+                  <span className='min-w-0 truncate'>{p.title}</span>
                 </button>
               )
             })}
@@ -134,34 +137,14 @@ function IndexPage() {
           <button
             type='submit'
             disabled={selectedPlatformId === null || createEndeavor.isPending}
-            className='h-11 w-full shrink-0 border border-emerald-800 bg-emerald-950 px-5 text-sm font-semibold text-emerald-100 transition-colors select-none hover:border-emerald-600 hover:bg-emerald-900 focus:border-emerald-500 focus:outline-none disabled:cursor-not-allowed disabled:border-gray-800 disabled:bg-gray-950 disabled:text-gray-600 md:w-auto'
+            className='inline-flex h-11 w-full shrink-0 items-center justify-center gap-2 border border-emerald-800 bg-emerald-950 px-5 text-sm font-semibold text-emerald-100 transition-colors select-none hover:border-emerald-600 hover:bg-emerald-900 focus:border-emerald-500 focus:outline-none disabled:cursor-not-allowed disabled:border-gray-800 disabled:bg-gray-950 disabled:text-gray-600 md:w-28'
           >
             {createEndeavor.isPending ? (
-              <span className='flex items-center justify-center gap-2'>
-                <svg
-                  className='h-4 w-4 animate-spin text-emerald-100'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                >
-                  <circle
-                    className='opacity-25'
-                    cx='12'
-                    cy='12'
-                    r='10'
-                    stroke='currentColor'
-                    strokeWidth='4'
-                  />
-                  <path
-                    className='opacity-75'
-                    fill='currentColor'
-                    d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
-                  />
-                </svg>
-                Adding...
-              </span>
+              <LoaderCircle aria-hidden='true' className='h-4 w-4 animate-spin' />
             ) : (
-              '+ Add'
+              <Plus aria-hidden='true' className='h-4 w-4 stroke-[3]' />
             )}
+            <span>Add</span>
           </button>
         </form>
         {errorMsg && (
