@@ -22,6 +22,14 @@ export class LeetCodeHeatmapProvider implements HeatmapProvider {
         if (response.status === 404) {
           throw new Error(`User '${username}' not found on LeetCode`)
         }
+        if (response.status === 429) {
+          const retryAfter = response.headers.get('retry-after')
+          throw new Error(
+            retryAfter
+              ? `LeetCode data is rate limited. Try again in about ${formatRetryAfter(retryAfter)}.`
+              : 'LeetCode data is rate limited. Try again later.',
+          )
+        }
         throw new Error(`LeetCode API error: ${response.status}`)
       }
 
@@ -51,6 +59,14 @@ export class LeetCodeHeatmapProvider implements HeatmapProvider {
       if (!response.ok) {
         if (response.status === 404) {
           throw new Error(`User '${username}' not found on LeetCode`)
+        }
+        if (response.status === 429) {
+          const retryAfter = response.headers.get('retry-after')
+          throw new Error(
+            retryAfter
+              ? `LeetCode data is rate limited. Try again in about ${formatRetryAfter(retryAfter)}.`
+              : 'LeetCode data is rate limited. Try again later.',
+          )
         }
         throw new Error(`LeetCode API error: ${response.status}`)
       }
@@ -93,6 +109,9 @@ export class LeetCodeHeatmapProvider implements HeatmapProvider {
       return activityData
     } catch (error) {
       console.error('Error fetching LeetCode data:', error)
+      if (error instanceof Error) {
+        throw error
+      }
       throw new Error(
         `Failed to fetch LeetCode data for ${username}. Please check if the username exists and try again.`,
       )
@@ -112,4 +131,21 @@ function parseSubmissionCalendar(
   }
 
   return submissionCalendar
+}
+
+function formatRetryAfter(retryAfter: string): string {
+  const seconds = Number(retryAfter)
+
+  if (!Number.isFinite(seconds) || seconds <= 0) {
+    return 'a few minutes'
+  }
+
+  const minutes = Math.ceil(seconds / 60)
+
+  if (minutes < 60) {
+    return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`
+  }
+
+  const hours = Math.ceil(minutes / 60)
+  return `${hours} ${hours === 1 ? 'hour' : 'hours'}`
 }

@@ -35,6 +35,15 @@ export function Activity({ userId, username, platform, platform_id, refetch }: H
   const { data, isFetching, isError, error, isSuccess } = useQuery<ActivityDataPoint[]>({
     queryKey: ['heatmap', platform, username.trim(), selectedYear],
     queryFn: async () => provider.fetchData(username.trim(), selectedYear),
+    retry: false,
+    staleTime: 1000 * 60 * 5,
+  })
+
+  const { data: currentYearData } = useQuery<ActivityDataPoint[]>({
+    queryKey: ['heatmap', platform, username.trim(), currentYear],
+    queryFn: async () => provider.fetchData(username.trim(), currentYear),
+    enabled: selectedYear !== currentYear,
+    retry: false,
     staleTime: 1000 * 60 * 5,
   })
 
@@ -56,6 +65,7 @@ export function Activity({ userId, username, platform, platform_id, refetch }: H
       const years = allYearsData.map((point) => new Date(point.date).getFullYear())
       return Array.from(new Set(years)).sort((a, b) => a - b)
     },
+    retry: false,
     staleTime: 1000 * 60 * 60, // Cache for 1 hour
   })
 
@@ -79,6 +89,10 @@ export function Activity({ userId, username, platform, platform_id, refetch }: H
     !isError && isSuccess && availableYears && availableYears.length === 0 && username
 
   const stats = calculateStats(filteredData, selectedYear)
+  const streakStats = calculateStats(
+    selectedYear === currentYear ? filteredData : currentYearData || [],
+    currentYear,
+  )
 
   // Get date range for selected year
   const startDate = new Date(selectedYear, 0, 1)
@@ -88,10 +102,18 @@ export function Activity({ userId, username, platform, platform_id, refetch }: H
     <div className='mx-auto w-full max-w-6xl min-w-0 overflow-hidden border border-gray-900 bg-black'>
       <div className='flex min-w-0 flex-col gap-4 p-4 sm:p-6'>
         <div className='flex min-w-0 flex-col items-start gap-3 md:flex-row md:items-center md:justify-between'>
-          <div className='inline-flex max-w-full items-center gap-2 rounded-full border border-gray-700 bg-gray-900 px-3 py-1.5 select-none'>
-            <span className='shrink-0 text-sm font-medium text-white'>{platform}</span>
-            <span className='text-xs text-gray-500'>/</span>
-            <span className='min-w-0 truncate text-sm font-medium text-gray-300'>{username}</span>
+          <div className='flex max-w-full flex-wrap items-center gap-2'>
+            <div className='inline-flex max-w-full items-center gap-2 rounded-full border border-gray-700 bg-gray-900 px-3 py-1.5 select-none'>
+              <span className='shrink-0 text-sm font-medium text-white'>{platform}</span>
+              <span className='text-xs text-gray-500'>/</span>
+              <span className='min-w-0 truncate text-sm font-medium text-gray-300'>{username}</span>
+            </div>
+            <div className='inline-flex items-center gap-2 rounded-full border border-gray-700 bg-gray-900 px-3 py-1.5 select-none'>
+              <span className='text-xs font-medium text-gray-300'>Current streak</span>
+              <span className='text-sm font-semibold text-emerald-400'>
+                {streakStats.currentStreak} {streakStats.currentStreak === 1 ? 'day' : 'days'}
+              </span>
+            </div>
           </div>
 
           <div className='flex max-w-full flex-wrap items-center gap-2'>
@@ -144,20 +166,12 @@ export function Activity({ userId, username, platform, platform_id, refetch }: H
           </div>
         ) : !isError && Array.isArray(filteredData) ? (
           <>
-            <div className='mb-4 grid grid-cols-2 gap-3 select-none sm:grid-cols-4'>
+            <div className='mb-4 grid grid-cols-2 gap-3 select-none sm:grid-cols-3'>
               <div className='rounded-xl border border-gray-950 bg-gray-950/40 p-4 backdrop-blur-md transition-colors hover:border-gray-800/80'>
                 <div className='text-[10px] font-bold tracking-wider text-gray-500 uppercase'>
                   Total contributions
                 </div>
                 <div className='mt-1 text-2xl font-black text-white'>{stats.total}</div>
-              </div>
-              <div className='rounded-xl border border-gray-950 bg-gray-950/40 p-4 backdrop-blur-md transition-colors hover:border-gray-800/80'>
-                <div className='text-[10px] font-bold tracking-wider text-gray-500 uppercase'>
-                  Current Streak
-                </div>
-                <div className='mt-1 text-2xl font-black text-emerald-400'>
-                  {stats.currentStreak} {stats.currentStreak === 1 ? 'day' : 'days'}
-                </div>
               </div>
               <div className='rounded-xl border border-gray-950 bg-gray-950/40 p-4 backdrop-blur-md transition-colors hover:border-gray-800/80'>
                 <div className='text-[10px] font-bold tracking-wider text-gray-500 uppercase'>
