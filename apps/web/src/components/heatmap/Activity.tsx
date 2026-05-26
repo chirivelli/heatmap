@@ -110,6 +110,7 @@ export function Activity({ userId, username, platform, platform_id, refetch }: H
             </div>
             <div className='inline-flex items-center gap-2 rounded-full border border-gray-700 bg-gray-900 px-3 py-1.5 select-none'>
               <span className='text-xs font-medium text-gray-300'>Current streak</span>
+              <span className='text-xs text-gray-500'>/</span>
               <span className='text-sm font-semibold text-emerald-400'>
                 {streakStats.currentStreak} {streakStats.currentStreak === 1 ? 'day' : 'days'}
               </span>
